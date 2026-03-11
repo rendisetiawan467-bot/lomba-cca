@@ -1,0 +1,1309 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lomba Cerdas Cermat Alkitab - SMP</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header Styles */
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+            animation: fadeInDown 1s ease;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            font-weight: 800;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        /* Main Menu */
+        .main-menu {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            animation: fadeInUp 1s ease;
+        }
+
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+        }
+
+        .menu-card {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 3px solid transparent;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .menu-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            transition: left 0.5s;
+        }
+
+        .menu-card:hover::before {
+            left: 100%;
+        }
+
+        .menu-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+            border-color: #667eea;
+        }
+
+        .menu-card.kelas-7 { background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%); }
+        .menu-card.kelas-8 { background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%); }
+        .menu-card.kelas-9 { background: linear-gradient(135deg, #d299c2 0%, #fef9d7 100%); }
+
+        .menu-icon {
+            font-size: 3em;
+            margin-bottom: 15px;
+        }
+
+        .menu-title {
+            font-size: 1.5em;
+            font-weight: 700;
+            color: #2d3748;
+            margin-bottom: 10px;
+        }
+
+        .menu-desc {
+            color: #4a5568;
+            font-size: 0.95em;
+        }
+
+        /* Game Screen */
+        .game-screen {
+            display: none;
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            animation: fadeIn 0.5s ease;
+        }
+
+        .game-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .team-info {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .team-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 12px;
+            text-align: center;
+            min-width: 150px;
+        }
+
+        .team-name {
+            font-size: 0.9em;
+            opacity: 0.9;
+            margin-bottom: 5px;
+        }
+
+        .team-score {
+            font-size: 2em;
+            font-weight: 700;
+        }
+
+        .timer-box {
+            background: #e53e3e;
+            color: white;
+            padding: 15px 30px;
+            border-radius: 12px;
+            text-align: center;
+            font-size: 2em;
+            font-weight: 700;
+            min-width: 120px;
+            transition: all 0.3s;
+        }
+
+        .timer-box.warning {
+            background: #dd6b20;
+            animation: pulse 1s infinite;
+        }
+
+        .timer-box.danger {
+            background: #e53e3e;
+            animation: pulse 0.5s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .round-info {
+            background: #edf2f7;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-weight: 600;
+            color: #4a5568;
+        }
+
+        /* Question Section */
+        .question-section {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 30px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .question-number {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            font-size: 0.9em;
+        }
+
+        .question-text {
+            font-size: 1.4em;
+            color: #2d3748;
+            line-height: 1.6;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        .question-image {
+            max-width: 300px;
+            margin: 20px auto;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        /* Answer Section */
+        .answer-section {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .answer-btn {
+            padding: 25px;
+            background: white;
+            border: 3px solid #e2e8f0;
+            border-radius: 15px;
+            cursor: pointer;
+            font-size: 1.1em;
+            font-weight: 600;
+            color: #2d3748;
+            transition: all 0.3s ease;
+            text-align: left;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .answer-btn:hover:not(.disabled) {
+            border-color: #667eea;
+            background: #f7fafc;
+            transform: translateX(10px);
+        }
+
+        .answer-btn.correct {
+            background: #c6f6d5;
+            border-color: #48bb78;
+            color: #22543d;
+            animation: correctPop 0.5s ease;
+        }
+
+        .answer-btn.wrong {
+            background: #fed7d7;
+            border-color: #f56565;
+            color: #742a2a;
+            animation: shake 0.5s ease;
+        }
+
+        .answer-btn.disabled {
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+
+        @keyframes correctPop {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+
+        /* Control Panel */
+        .control-panel {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .control-btn {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .control-btn.primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .control-btn.success {
+            background: #48bb78;
+            color: white;
+        }
+
+        .control-btn.danger {
+            background: #f56565;
+            color: white;
+        }
+
+        .control-btn.warning {
+            background: #ed8936;
+            color: white;
+        }
+
+        .control-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        /* Score Board */
+        .score-board {
+            display: none;
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            animation: fadeIn 0.5s ease;
+            text-align: center;
+        }
+
+        .trophy {
+            font-size: 5em;
+            margin-bottom: 20px;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        .winner-announcement {
+            font-size: 2em;
+            font-weight: 700;
+            color: #2d3748;
+            margin-bottom: 30px;
+        }
+
+        .final-scores {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .final-team-box {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            padding: 30px;
+            border-radius: 15px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .final-team-box.winner {
+            background: linear-gradient(135deg, #f6e05e 0%, #d69e2e 100%);
+            transform: scale(1.05);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .final-team-name {
+            font-size: 1.3em;
+            font-weight: 700;
+            color: #2d3748;
+            margin-bottom: 10px;
+        }
+
+        .final-team-score {
+            font-size: 3em;
+            font-weight: 800;
+            color: #667eea;
+        }
+
+        .final-team-box.winner .final-team-score {
+            color: #744210;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 600px;
+            width: 100%;
+            text-align: center;
+            animation: modalPop 0.3s ease;
+        }
+
+        @keyframes modalPop {
+            from { transform: scale(0.8); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .modal-title {
+            font-size: 1.8em;
+            font-weight: 700;
+            color: #2d3748;
+            margin-bottom: 20px;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #4a5568;
+        }
+
+        .input-group input, .input-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: border-color 0.3s;
+        }
+
+        .input-group input:focus, .input-group select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        /* Animations */
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header h1 { font-size: 1.8em; }
+            .answer-section { grid-template-columns: 1fr; }
+            .game-header { flex-direction: column; text-align: center; }
+            .team-info { justify-content: center; }
+            .question-text { font-size: 1.2em; }
+        }
+
+        /* Utility */
+        .hidden { display: none !important; }
+        
+        .badge {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 12px;
+            font-size: 0.8em;
+            font-weight: 600;
+            margin-left: 10px;
+        }
+        
+        .badge-easy { background: #c6f6d5; color: #22543d; }
+        .badge-medium { background: #feebc8; color: #744210; }
+        .badge-hard { background: #fed7d7; color: #742a2a; }
+
+        /* Progress Bar */
+        .progress-container {
+            width: 100%;
+            height: 10px;
+            background: #e2e8f0;
+            border-radius: 5px;
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.3s ease;
+        }
+
+        /* Sound Toggle */
+        .sound-toggle {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            font-size: 1.5em;
+            z-index: 100;
+            transition: all 0.3s;
+        }
+
+        .sound-toggle:hover {
+            transform: scale(1.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>🏆 LOMBA CERDAS CERMAT ALKITAB 🏆</h1>
+            <p>Sekolah Menengah Pertama (SMP) - Kelas 7, 8 & 9</p>
+        </div>
+
+        <!-- Main Menu -->
+        <div class="main-menu" id="mainMenu">
+            <h2 style="text-align: center; color: #2d3748; margin-bottom: 10px;">Pilih Kelas</h2>
+            <p style="text-align: center; color: #718096; margin-bottom: 20px;">Sesuaikan tingkat kesulitan dengan kelas peserta</p>
+            
+            <div class="menu-grid">
+                <div class="menu-card kelas-7" onclick="selectClass(7)">
+                    <div class="menu-icon">📚</div>
+                    <div class="menu-title">Kelas 7</div>
+                    <div class="menu-desc">Dasar-dasar iman, kisah para patriark, dan perumpamaan Yesus sederhana</div>
+                </div>
+                
+                <div class="menu-card kelas-8" onclick="selectClass(8)">
+                    <div class="menu-icon">🎯</div>
+                    <div class="menu-title">Kelas 8</div>
+                    <div class="menu-desc">Sejarah gereja, tokoh-tokoh Alkitab, dan doktrin dasar</div>
+                </div>
+                
+                <div class="menu-card kelas-9" onclick="selectClass(9)">
+                    <div class="menu-icon">🎓</div>
+                    <div class="menu-title">Kelas 9</div>
+                    <div class="menu-desc">Teologi mendalam, analisis kitab, dan aplikasi kehidupan</div>
+                </div>
+            </div>
+
+            <div style="margin-top: 30px; text-align: center;">
+                <button class="control-btn primary" onclick="showRules()">
+                    📋 Peraturan Lomba
+                </button>
+            </div>
+        </div>
+
+        <!-- Setup Modal -->
+        <div class="modal" id="setupModal">
+            <div class="modal-content">
+                <h3 class="modal-title">⚙️ Pengaturan Tim</h3>
+                <div class="input-group">
+                    <label>Nama Tim A</label>
+                    <input type="text" id="teamAName" placeholder="Masukkan nama tim A" value="Tim A">
+                </div>
+                <div class="input-group">
+                    <label>Nama Tim B</label>
+                    <input type="text" id="teamBName" placeholder="Masukkan nama tim B" value="Tim B">
+                </div>
+                <div class="input-group">
+                    <label>Jumlah Ronde</label>
+                    <select id="roundCount">
+                        <option value="5">5 Ronde (Cepat)</option>
+                        <option value="10" selected>10 Ronde (Standar)</option>
+                        <option value="15">15 Ronde (Maraton)</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label>Waktu per Soal (detik)</label>
+                    <select id="timePerQuestion">
+                        <option value="15">15 detik (Sulit)</option>
+                        <option value="20">20 detik</option>
+                        <option value="30" selected>30 detik (Standar)</option>
+                        <option value="45">45 detik (Santai)</option>
+                    </select>
+                </div>
+                <div style="display: flex; gap: 10px; justify-content: center; margin-top: 20px;">
+                    <button class="control-btn secondary" onclick="closeModal()">Batal</button>
+                    <button class="control-btn primary" onclick="startGame()">Mulai Lomba!</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Game Screen -->
+        <div class="game-screen" id="gameScreen">
+            <div class="game-header">
+                <div class="team-info">
+                    <div class="team-box" id="teamADisplay">
+                        <div class="team-name" id="teamANameDisplay">Tim A</div>
+                        <div class="team-score" id="teamAScore">0</div>
+                    </div>
+                    <div class="team-box" id="teamBDisplay">
+                        <div class="team-name" id="teamBNameDisplay">Tim B</div>
+                        <div class="team-score" id="teamBScore">0</div>
+                    </div>
+                </div>
+                <div class="timer-box" id="timer">30</div>
+                <div class="round-info" id="roundInfo">Ronde 1/10</div>
+            </div>
+
+            <div class="progress-container">
+                <div class="progress-bar" id="progressBar" style="width: 0%"></div>
+            </div>
+
+            <div class="question-section">
+                <div class="question-number" id="questionNumber">SOAL #1</div>
+                <div class="question-text" id="questionText">Memuat soal...</div>
+            </div>
+
+            <div class="answer-section" id="answerSection">
+                <!-- Answers will be generated here -->
+            </div>
+
+            <div class="control-panel">
+                <button class="control-btn success" onclick="awardPoints('A')">
+                    ✅ Tim A Benar (+10)
+                </button>
+                <button class="control-btn danger" onclick="awardPoints('B')">
+                    ✅ Tim B Benar (+10)
+                </button>
+                <button class="control-btn warning" onclick="showAnswer()">
+                    👁️ Lihat Jawaban
+                </button>
+                <button class="control-btn primary" onclick="nextQuestion()">
+                    ⏭️ Soal Berikutnya
+                </button>
+            </div>
+        </div>
+
+        <!-- Score Board -->
+        <div class="score-board" id="scoreBoard">
+            <div class="trophy">🏆</div>
+            <h2 class="winner-announcement" id="winnerText">Selamat!</h2>
+            
+            <div class="final-scores">
+                <div class="final-team-box" id="finalTeamA">
+                    <div class="final-team-name" id="finalTeamAName">Tim A</div>
+                    <div class="final-team-score" id="finalTeamAScore">0</div>
+                </div>
+                <div class="final-team-box" id="finalTeamB">
+                    <div class="final-team-name" id="finalTeamBName">Tim B</div>
+                    <div class="final-team-score" id="finalTeamBScore">0</div>
+                </div>
+            </div>
+
+            <div style="margin-top: 30px;">
+                <button class="control-btn primary" onclick="restartGame()">
+                    🔄 Main Lagi
+                </button>
+                <button class="control-btn secondary" onclick="backToMenu()">
+                    🏠 Menu Utama
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sound Toggle -->
+    <div class="sound-toggle" onclick="toggleSound()" id="soundToggle">
+        🔊
+    </div>
+
+    <script>
+        // Database Soal per Kelas
+        const questionDatabase = {
+            7: [
+                {
+                    q: "Siapakah yang membangun bahtera besar untuk menyelamatkan hewan dari air bah?",
+                    options: ["Musa", "Nuh", "Daud", "Abraham"],
+                    correct: 1,
+                    explanation: "Nuh membangun bahtera sesuai perintah Allah (Kejadian 6-9)"
+                },
+                {
+                    q: "Berapa jumlah murid Yesus yang utama (rasul)?",
+                    options: ["10", "11", "12", "13"],
+                    correct: 2,
+                    explanation: "Yesus memilih 12 rasul (Lukas 6:13)"
+                },
+                {
+                    q: "Apa nama buku pertama dalam Perjanjian Baru?",
+                    options: ["Matius", "Markus", "Lukas", "Yohanes"],
+                    correct: 0,
+                    explanation: "Injil Matius adalah buku pertama Perjanjian Baru"
+                },
+                {
+                    q: "Siapakah ibu Yesus?",
+                    options: ["Elisabet", "Marta", "Maria", "Salome"],
+                    correct: 2,
+                    explanation: "Maria adalah ibu Yesus (Lukas 1-2)"
+                },
+                {
+                    q: "Di mana Yesus dilahirkan?",
+                    options: ["Nazaret", "Betlehem", "Yerusalem", "Yerikho"],
+                    correct: 1,
+                    explanation: "Yesus dilahirkan di Betlehem (Matius 2:1)"
+                },
+                {
+                    q: "Apa nama laut yang dibelah Musa?",
+                    options: ["Laut Mati", "Laut Tiberias", "Laut Merah", "Laut Galilea"],
+                    correct: 2,
+                    explanation: "Musa membelah Laut Merah (Keluaran 14)"
+                },
+                {
+                    q: "Siapakah yang ditolak Saulus sebelum menjadi Paulus?",
+                    options: ["Petrus", "Stefanus", "Barnabas", "Yohanes"],
+                    correct: 1,
+                    explanation: "Stefanus adalah martir pertama (Kisah 7)"
+                },
+                {
+                    q: "Berapa hari Yesus berada dalam kubur sebelum bangkit?",
+                    options: ["Satu hari", "Dua hari", "Tiga hari", "Empat hari"],
+                    correct: 2,
+                    explanation: "Yesus bangkit pada hari ketiga (Matius 16:21)"
+                },
+                {
+                    q: "Apa nama taman di mana Yesus sering berdoa?",
+                    options: ["Taman Eden", "Getsemani", "Taman Olives", "Betania"],
+                    correct: 1,
+                    explanation: "Getsemani adalah tempat Yesus berdoa sebelum ditangkap (Matius 26:36)"
+                },
+                {
+                    q: "Siapakah yang menggantikan Yudas Iskariot sebagai rasul?",
+                    options: ["Matias", "Barnabas", "Timotius", "Silas"],
+                    correct: 0,
+                    explanation: "Matias dipilih melalui undian (Kisah 1:26)"
+                },
+                {
+                    q: "Apa hukum emas yang diajarkan Yesus?",
+                    options: ["Kasihilah sesamamu manusia", "Taatilah orang tuamu", "Jangan mencuri", "Berdoalah setiap hari"],
+                    correct: 0,
+                    explanation: "Kasihilah sesamamu manusia seperti dirimu sendiri (Matius 7:12)"
+                },
+                {
+                    q: "Apa buah Roh yang pertama kali disebutkan?",
+                    options: ["Damai sejahtera", "Kasih", "Kesabaran", "Kemurahan"],
+                    correct: 1,
+                    explanation: "Kasih adalah buah Roh pertama (Galatia 5:22)"
+                },
+                {
+                    q: "Siapakah yang menjadi imam besar setelah Musa?",
+                    options: ["Hur", "Eleazar", "Harun", "Miryam"],
+                    correct: 2,
+                    explanation: "Harun adalah saudara Musa yang menjadi imam besar (Keluaran 28)"
+                },
+                {
+                    q: "Berapa umur Metusalah ketika ia mati?",
+                    options: ["777 tahun", "888 tahun", "969 tahun", "1000 tahun"],
+                    correct: 2,
+                    explanation: "Metusalah hidup 969 tahun, manusia tertua dalam Alkitab (Kejadian 5:27)"
+                },
+                {
+                    q: "Apa nama anak Daud yang memberontak melawannya?",
+                    options: ["Salomo", "Absalom", "Adonia", "Amnon"],
+                    correct: 1,
+                    explanation: "Absalom memberontak melawan Daud (2 Samuel 15)"
+                }
+            ],
+            8: [
+                {
+                    q: "Berapa tahun bangsa Israel mengembara di padang gurun?",
+                    options: ["20 tahun", "30 tahun", "40 tahun", "50 tahun"],
+                    correct: 2,
+                    explanation: "40 tahun mengembara sebelum masuk Kanaan (Bilangan 14:34)"
+                },
+                {
+                    q: "Siapakah nabi yang dimakan oleh ikan besar?",
+                    options: ["Elia", "Elisa", "Yunus", "Yesaya"],
+                    correct: 2,
+                    explanation: "Yunus dalam perut ikan 3 hari 3 malam (Yunus 1-2)"
+                },
+                {
+                    q: "Apa nama gunung di mana Musa menerima Sepuluh Perintah Allah?",
+                    options: ["Gunung Sinai", "Gunung Nebo", "Gunung Karmel", "Gunung Tabor"],
+                    correct: 0,
+                    explanation: "Gunung Sinai (juga Horeb) tempat pemberian hukum (Keluaran 19)"
+                },
+                {
+                    q: "Siapakah raja yang membangun Bait Allah pertama di Yerusalem?",
+                    options: ["Daud", "Salomo", "Yosia", "Hizkia"],
+                    correct: 1,
+                    explanation: "Salomo membangun Bait Allah (1 Raja-raja 6)"
+                },
+                {
+                    q: "Berapa banyak mujizat yang dilakukan Yesus menurut Injil Yohanes?",
+                    options: ["5", "7", "10", "12"],
+                    correct: 1,
+                    explanation: "7 tanda (mujizat) dalam Injil Yohanes (Yohanes 21:14)"
+                },
+                {
+                    q: "Siapakah yang menulis sebagian besar surat dalam Perjanjian Baru?",
+                    options: ["Petrus", "Yohanes", "Paulus", "Yakobus"],
+                    correct: 2,
+                    explanation: "Paulus menulis 13 surat (Roma - Filemon)"
+                },
+                {
+                    q: "Apa nama sungai di mana Yohanes Pembaptis membaptis Yesus?",
+                    options: ["Sungai Nil", "Sungai Yordan", "Sungai Efrat", "Sungai Tigris"],
+                    correct: 1,
+                    explanation: "Sungai Yordan (Matius 3:13)"
+                },
+                {
+                    q: "Siapakah yang mengkhianati Yesus dengan ciuman?",
+                    options: ["Petrus", "Yudas Iskariot", "Tomas", "Filipus"],
+                    correct: 1,
+                    explanation: "Yudas mengkhianati Yesus dengan ciuman (Matius 26:48)"
+                },
+                {
+                    q: "Berapa kali Petrus menyangkal Yesus sebelum ayam berkokok?",
+                    options: ["Satu kali", "Dua kali", "Tiga kali", "Empat kali"],
+                    correct: 2,
+                    explanation: "Tiga kali menyangkal (Matius 26:34)"
+                },
+                {
+                    q: "Apa nama kota di mana murid-murid pertama kali disebut 'Kristen'?",
+                    options: ["Yerusalem", "Antiokhia", "Roma", "Korintus"],
+                    correct: 1,
+                    explanation: "Pertama kali di Antiokhia (Kisah 11:26)"
+                },
+                {
+                    q: "Apa yang dimaksud dengan 'memikul salib'?",
+                    options: ["Menderita penyakit", "Mengikuti jalan penderitaan demi iman", "Membawa beban fisik", "Menghadapi kesulitan hidup"],
+                    correct: 1,
+                    explanation: "Mengikuti Yesus dengan menyangkal diri (Lukas 9:23)"
+                },
+                {
+                    q: "Apa perbedaan antara 'agape' dan 'philia'?",
+                    options: ["Tidak ada bedanya", "Agape adalah kasih ilahi, philia adalah kasih persahabatan", "Agape untuk keluarga, philia untuk teman", "Agape lebih rendah dari philia"],
+                    correct: 1,
+                    explanation: "Agape: kasih ilahi tanpa syarat, Philia: kasih persahabatan"
+                },
+                {
+                    q: "Apa yang Yesus maksud dengan 'mati miskin karena miskin'?",
+                    options: ["Tidak punya uang", "Mengandalkan Allah sepenuhnya", "Menolak kekayaan", "Hidup sederhana"],
+                    correct: 1,
+                    explanation: "Miskin di hadapan Allah = bergantung sepenuhnya pada Allah (Lukas 6:20)"
+                },
+                {
+                    q: "Apa yang diajarkan Paulus tentang tubuh kita?",
+                    options: ["Tubuh adalah milik kita", "Tubuh adalah bait Roh Kudus", "Tubuh tidak penting", "Tubuh harus disiksa"],
+                    correct: 1,
+                    explanation: "Tubuh adalah bait Roh Kudus (1 Korintus 6:19)"
+                },
+                {
+                    q: "Apa yang dimaksud dengan 'pengampunan' dalam teks Yunani 'aphesis'?",
+                    options: ["Melupakan", "Membebaskan dari hutang", "Menghukum", "Mengabaikan"],
+                    correct: 1,
+                    explanation: "Aphesis berarti melepaskan beban/hutang (Matius 6:12)"
+                }
+            ],
+            9: [
+                {
+                    q: "Apa yang dimaksud dengan 'kenosis' dalam Filipi 2:7?",
+                    options: ["Pengosongan diri", "Pengangkatan martabat", "Penghormatan", "Kekuasaan"],
+                    correct: 0,
+                    explanation: "Yesus mengosongkan diri (mengekankan kemanusiaan-Nya) (Filipi 2:7)"
+                },
+                {
+                    q: "Apa perbedaan antara 'hamartia' dan 'paraptoma' dalam teks Yunani?",
+                    options: ["Tidak ada bedanya", "Hamartia adalah dosa yang meleset, paraptoma adalah pelanggaran", "Hamartia lebih berat", "Paraptoma lebih berat"],
+                    correct: 1,
+                    explanation: "Hamartia: meleset dari target, Paraptoma: jatuh/tersandung"
+                },
+                {
+                    q: "Apa yang dimaksud dengan 'soteria' dalam teks Yunani?",
+                    options: ["Hukuman", "Keselamatan menyeluruh", "Pengampunan", "Penebusan"],
+                    correct: 1,
+                    explanation: "Soteria: keselamatan jiwa, jasmani, sekarang dan eskatologis"
+                },
+                {
+                    q: "Apa yang diajarkan Yesaya tentang 'hamba TUHAN yang menderita'?",
+                    options: ["Israel bangkit", "Mesias akan menderita untuk dosa umat", "Nabi akan mati syahid", "Orang benar akan dianiaya"],
+                    correct: 1,
+                    explanation: "Yesaya 53 tentang Mesias yang menderita untuk dosa umat"
+                },
+                {
+                    q: "Apa yang dimaksud dengan 'dikaiosyne' dalam Roma 1:17?",
+                    options: ["Keadilan hukum", "Kebenaran Allah yang diberikan kepada orang percaya", "Kebaikan moral", "Hukum Musa"],
+                    correct: 1,
+                    explanation: "Kebenaran dari Allah oleh iman (Roma 1:17)"
+                },
+                {
+                    q: "Apa yang Yesus maksud dengan 'anak-anak dunia ini lebih cerdik'?",
+                    options: ["Mereka lebih pintar", "Mereka lebih tahu memanfaatkan kesempatan", "Mereka lebih kaya", "Mereka lebih berkuasa"],
+                    correct: 1,
+                    explanation: "Anak dunia lebih cerdik dalam memanfaatkan kesempatan (Lukas 16:8)"
+                },
+                {
+                    q: "Apa yang diajarkan Paulus tentang 'ekklesia' dalam Efesus?",
+                    options: ["Gedung gereja", "Jemaat yang adalah tubuh Kristus", "Organisasi agama", "Tempat ibadah"],
+                    correct: 1,
+                    explanation: "Ekklesia: jemaat/jemaat yang adalah tubuh Kristus (Efesus 4:11)"
+                },
+                {
+                    q: "Apa yang dimaksud dengan 'propitiasi' dalam 1 Yohanes 2:2?",
+                    options: ["Penebusan dosa", "Pendamaian melalui korban", "Pengampunan", "Pemulihan"],
+                    correct: 1,
+                    explanation: "Hilasterion: pendamaian, pemenuhan murka Allah (1 Yohanes 2:2)"
+                },
+                {
+                    q: "Apa yang Yesus maksud dengan 'kerajaan sorga sudah dekat'?",
+                    options: ["Akan datang dalam waktu lama", "Sudah hadir dalam diri-Nya", "Hanya di masa depan", "Hanya di surga"],
+                    correct: 1,
+                    explanation: "Kerajaan Allah sudah hadir dalam pelayanan Yesus (Lukas 17:21)"
+                },
+                {
+                    q: "Apa yang diajarkan Paulus tentang 'synergia' dalam Filippi?",
+                    options: ["Kerja sama dengan Allah", "Kerja keras sendiri", "Bantuan orang lain", "Kemampuan pribadi"],
+                    correct: 0,
+                    explanation: "Bekerja bersama Allah yang mengerjakan dalam kita (Filipi 2:12-13)"
+                },
+                {
+                    q: "Siapakah yang menulis 'Summa Theologica'?",
+                    options: ["Agustinus", "Thomas Aquinas", "Anselmus", "Bonaventura"],
+                    correct: 1,
+                    explanation: "Thomas Aquinas - teolog Skolastik paling berpengaruh"
+                },
+                {
+                    q: "Apa nama kontroversi teologis tentang sifat Kristus yang diputuskan di Konsili Kalsedon?",
+                    options: ["Arianisme", "Nestorianisme", "Monofisitisme", "Eutichianisme"],
+                    correct: 2,
+                    explanation: "Monofisitisme: Kristus hanya memiliki satu kodrat (ditolak)"
+                },
+                {
+                    q: "Siapakah yang memulai Reformasi Protestan dengan menempel 95 tesis?",
+                    options: ["Yohanes Calvin", "Martin Luther", "Ulrich Zwingli", "Yohanes Wycliffe"],
+                    correct: 1,
+                    explanation: "Martin Luther - 31 Oktober 1517 di Wittenberg"
+                },
+                {
+                    q: "Apa nama konsep yang diajarkan Calvin tentang pemilihan sebelum dunia diciptakan?",
+                    options: ["Predestinasi", "Arminianisme", "Pelagianisme", "Semi-Pelagianisme"],
+                    correct: 0,
+                    explanation: "Predestinasi: Allah memilih sebelum dunia dijadikan (Roma 8:29)"
+                },
+                {
+                    q: "Siapakah yang menulis 'The Pilgrim's Progress'?",
+                    options: ["John Bunyan", "John Milton", "John Donne", "John Wesley"],
+                    correct: 0,
+                    explanation: "John Bunyan - alegori perjalanan rohani (1678)"
+                }
+            ]
+        };
+
+        // State Management
+        let currentClass = 7;
+        let currentQuestions = [];
+        let currentQuestionIndex = 0;
+        let teamA = { name: "Tim A", score: 0 };
+        let teamB = { name: "Tim B", score: 0 };
+        let timer = null;
+        let timeLeft = 30;
+        let soundEnabled = true;
+        let questionAnswered = false;
+
+        // Sound Effects (using Web Audio API)
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        
+        function playSound(type) {
+            if (!soundEnabled) return;
+            
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            switch(type) {
+                case 'correct':
+                    oscillator.frequency.setValueAtTime(523.25, audioContext.currentTime); // C5
+                    oscillator.frequency.setValueAtTime(659.25, audioContext.currentTime + 0.1); // E5
+                    gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
+                    oscillator.start(audioContext.currentTime);
+                    oscillator.stop(audioContext.currentTime + 0.5);
+                    break;
+                case 'wrong':
+                    oscillator.frequency.setValueAtTime(200, audioContext.currentTime);
+                    gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+                    oscillator.start(audioContext.currentTime);
+                    oscillator.stop(audioContext.currentTime + 0.3);
+                    break;
+                case 'tick':
+                    oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
+                    gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
+                    oscillator.start(audioContext.currentTime);
+                    oscillator.stop(audioContext.currentTime + 0.1);
+                    break;
+                case 'win':
+                    oscillator.frequency.setValueAtTime(523.25, audioContext.currentTime);
+                    oscillator.frequency.setValueAtTime(659.25, audioContext.currentTime + 0.2);
+                    oscillator.frequency.setValueAtTime(783.99, audioContext.currentTime + 0.4);
+                    gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 1);
+                    oscillator.start(audioContext.currentTime);
+                    oscillator.stop(audioContext.currentTime + 1);
+                    break;
+            }
+        }
+
+        function toggleSound() {
+            soundEnabled = !soundEnabled;
+            document.getElementById('soundToggle').textContent = soundEnabled ? '🔊' : '🔇';
+        }
+
+        function selectClass(classNum) {
+            currentClass = classNum;
+            document.getElementById('setupModal').style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('setupModal').style.display = 'none';
+        }
+
+        function startGame() {
+            // Get settings
+            teamA.name = document.getElementById('teamAName').value || "Tim A";
+            teamB.name = document.getElementById('teamBName').value || "Tim B";
+            const roundCount = parseInt(document.getElementById('roundCount').value);
+            timeLeft = parseInt(document.getElementById('timePerQuestion').value);
+            
+            // Initialize questions
+            const allQuestions = [...questionDatabase[currentClass]];
+            // Shuffle and select
+            currentQuestions = shuffleArray(allQuestions).slice(0, roundCount);
+            
+            // Reset scores
+            teamA.score = 0;
+            teamB.score = 0;
+            currentQuestionIndex = 0;
+            
+            // Update UI
+            document.getElementById('teamANameDisplay').textContent = teamA.name;
+            document.getElementById('teamBNameDisplay').textContent = teamB.name;
+            document.getElementById('teamAScore').textContent = "0";
+            document.getElementById('teamBScore').textContent = "0";
+            
+            // Hide menu, show game
+            document.getElementById('mainMenu').style.display = 'none';
+            document.getElementById('setupModal').style.display = 'none';
+            document.getElementById('gameScreen').style.display = 'block';
+            document.getElementById('scoreBoard').style.display = 'none';
+            
+            loadQuestion();
+        }
+
+        function shuffleArray(array) {
+            const newArray = [...array];
+            for (let i = newArray.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+            }
+            return newArray;
+        }
+
+        function loadQuestion() {
+            if (currentQuestionIndex >= currentQuestions.length) {
+                endGame();
+                return;
+            }
+            
+            const q = currentQuestions[currentQuestionIndex];
+            questionAnswered = false;
+            
+            // Update UI
+            document.getElementById('roundInfo').textContent = `Ronde ${currentQuestionIndex + 1}/${currentQuestions.length}`;
+            document.getElementById('questionNumber').textContent = `SOAL #${currentQuestionIndex + 1}`;
+            document.getElementById('questionText').textContent = q.q;
+            
+            // Update progress bar
+            const progress = ((currentQuestionIndex) / currentQuestions.length) * 100;
+            document.getElementById('progressBar').style.width = progress + '%';
+            
+            // Generate answer buttons
+            const answerSection = document.getElementById('answerSection');
+            answerSection.innerHTML = '';
+            
+            q.options.forEach((opt, idx) => {
+                const btn = document.createElement('button');
+                btn.className = 'answer-btn';
+                btn.textContent = `${String.fromCharCode(65 + idx)}. ${opt}`;
+                btn.onclick = () => selectAnswer(idx);
+                answerSection.appendChild(btn);
+            });
+            
+            // Reset timer
+            resetTimer();
+        }
+
+        function resetTimer() {
+            clearInterval(timer);
+            const timerDisplay = document.getElementById('timer');
+            let time = parseInt(document.getElementById('timePerQuestion').value);
+            timerDisplay.textContent = time;
+            timerDisplay.className = 'timer-box';
+            
+            timer = setInterval(() => {
+                time--;
+                timerDisplay.textContent = time;
+                
+                if (time <= 10) {
+                    timerDisplay.className = 'timer-box danger';
+                    playSound('tick');
+                } else if (time <= 20) {
+                    timerDisplay.className = 'timer-box warning';
+                }
+                
+                if (time <= 0) {
+                    clearInterval(timer);
+                    showAnswer();
+                }
+            }, 1000);
+        }
+
+        function selectAnswer(index) {
+            if (questionAnswered) return;
+            
+            const q = currentQuestions[currentQuestionIndex];
+            const buttons = document.querySelectorAll('.answer-btn');
+            
+            buttons.forEach((btn, idx) => {
+                btn.classList.add('disabled');
+                if (idx === q.correct) {
+                    btn.classList.add('correct');
+                } else if (idx === index && idx !== q.correct) {
+                    btn.classList.add('wrong');
+                }
+            });
+            
+            if (index === q.correct) {
+                playSound('correct');
+            } else {
+                playSound('wrong');
+            }
+            
+            questionAnswered = true;
+            clearInterval(timer);
+        }
+
+        function showAnswer() {
+            const q = currentQuestions[currentQuestionIndex];
+            const buttons = document.querySelectorAll('.answer-btn');
+            
+            buttons.forEach((btn, idx) => {
+                btn.classList.add('disabled');
+                if (idx === q.correct) {
+                    btn.classList.add('correct');
+                }
+            });
+            
+            // Show explanation
+            setTimeout(() => {
+                alert(`💡 Penjelasan:\n${q.explanation}`);
+            }, 500);
+            
+            questionAnswered = true;
+            clearInterval(timer);
+        }
+
+        function awardPoints(team) {
+            if (!questionAnswered) {
+                alert('Tunjukkan jawaban terlebih dahulu!');
+                return;
+            }
+            
+            if (team === 'A') {
+                teamA.score += 10;
+                document.getElementById('teamAScore').textContent = teamA.score;
+                document.getElementById('teamADisplay').style.animation = 'pulse 0.5s';
+            } else {
+                teamB.score += 10;
+                document.getElementById('teamBScore').textContent = teamB.score;
+                document.getElementById('teamBDisplay').style.animation = 'pulse 0.5s';
+            }
+            
+            setTimeout(() => {
+                document.getElementById('teamADisplay').style.animation = '';
+                document.getElementById('teamBDisplay').style.animation = '';
+            }, 500);
+        }
+
+        function nextQuestion() {
+            currentQuestionIndex++;
+            loadQuestion();
+        }
+
+        function endGame() {
+            playSound('win');
+            document.getElementById('gameScreen').style.display = 'none';
+            document.getElementById('scoreBoard').style.display = 'block';
+            
+            // Update final scores
+            document.getElementById('finalTeamAName').textContent = teamA.name;
+            document.getElementById('finalTeamBName').textContent = teamB.name;
+            document.getElementById('finalTeamAScore').textContent = teamA.score;
+            document.getElementById('finalTeamBScore').textContent = teamB.score;
+            
+            // Determine winner
+            const teamABox = document.getElementById('finalTeamA');
+            const teamBBox = document.getElementById('finalTeamB');
+            const winnerText = document.getElementById('winnerText');
+            
+            teamABox.classList.remove('winner');
+            teamBBox.classList.remove('winner');
+            
+            if (teamA.score > teamB.score) {
+                teamABox.classList.add('winner');
+                winnerText.textContent = `🏆 Selamat ${teamA.name}! 🏆`;
+            } else if (teamB.score > teamA.score) {
+                teamBBox.classList.add('winner');
+                winnerText.textContent = `🏆 Selamat ${teamB.name}! 🏆`;
+            } else {
+                winnerText.textContent = '🤝 Seri! 🤝';
+            }
+        }
+
+        function restartGame() {
+            startGame();
+        }
+
+        function backToMenu() {
+            document.getElementById('scoreBoard').style.display = 'none';
+            document.getElementById('gameScreen').style.display = 'none';
+            document.getElementById('mainMenu').style.display = 'block';
+            clearInterval(timer);
+        }
+
+        function showRules() {
+            alert(`📋 PERATURAN LOMBA CERDAS CERMAT ALKITAB 📋
+
+🎯 Sistem Penilaian:
+• Jawaban benar: +10 poin
+• Tidak ada pengurangan poin untuk jawaban salah
+• Waktu dibatasi per soal
+
+⏱️ Mekanisme Permainan:
+1. Pembaca akan membacakan soal
+2. Tim dapat menjawab setelah lampu hijau (atau setelah soal selesai dibaca)
+3. Jawaban harus disertai dengan alasan/ayat pendukung (untuk kelas 8-9)
+4. Wasit menentukan jawaban benar/salah
+
+🏆 Kriteria Kemenangan:
+• Tim dengan skor tertinggi menang
+• Jika seri, ada soal tie-breaker
+
+💡 Tips:
+• Baca Alkitab secara rutin
+• Hafalkan ayat-ayat kunci
+• Pahami konteks sejarah dan budaya
+• Kerjasama tim sangat penting
+
+Semoga sukses! 🙏`);
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('setupModal');
+            if (event.target === modal) {
+                closeModal();
+            }
+        }
+    </script>
+</body>
+</html>
