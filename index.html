@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lomba Cerdas Cermat Alkitab - SMP</title>
+    <title>Lomba Cerdas Cermat Alkitab - Multi Device</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap');
         
@@ -17,56 +17,51 @@
             font-family: 'Poppins', sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
-            overflow-x: hidden;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
             padding: 20px;
         }
 
-        /* Header Styles */
-        .header {
-            text-align: center;
-            color: white;
-            margin-bottom: 30px;
-            animation: fadeInDown 1s ease;
+        .container {
+            width: 100%;
+            max-width: 1200px;
         }
 
-        .header h1 {
+        /* Role Selection Screen */
+        .role-selection {
+            background: white;
+            border-radius: 30px;
+            padding: 50px;
+            text-align: center;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.3);
+            animation: fadeIn 0.5s ease;
+        }
+
+        .role-title {
             font-size: 2.5em;
             font-weight: 800;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-            margin-bottom: 10px;
+            color: #2d3748;
+            margin-bottom: 20px;
         }
 
-        .header p {
+        .role-subtitle {
+            color: #718096;
+            margin-bottom: 40px;
             font-size: 1.2em;
-            opacity: 0.9;
         }
 
-        /* Main Menu */
-        .main-menu {
-            background: white;
-            border-radius: 20px;
-            padding: 40px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-            animation: fadeInUp 1s ease;
-        }
-
-        .menu-grid {
+        .role-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 25px;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
             margin-top: 30px;
         }
 
-        .menu-card {
+        .role-card {
             background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-            border-radius: 15px;
-            padding: 30px;
-            text-align: center;
+            border-radius: 20px;
+            padding: 40px 30px;
             cursor: pointer;
             transition: all 0.3s ease;
             border: 3px solid transparent;
@@ -74,1019 +69,971 @@
             overflow: hidden;
         }
 
-        .menu-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
-            transition: left 0.5s;
-        }
-
-        .menu-card:hover::before {
-            left: 100%;
-        }
-
-        .menu-card:hover {
+        .role-card:hover {
             transform: translateY(-10px);
-            box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
             border-color: #667eea;
         }
 
-        .menu-card.kelas-7 { background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%); }
-        .menu-card.kelas-8 { background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%); }
-        .menu-card.kelas-9 { background: linear-gradient(135deg, #d299c2 0%, #fef9d7 100%); }
-
-        .menu-icon {
-            font-size: 3em;
-            margin-bottom: 15px;
+        .role-card.wasit {
+            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
         }
 
-        .menu-title {
+        .role-card.pemain-a {
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+        }
+
+        .role-card.pemain-b {
+            background: linear-gradient(135deg, #d299c2 0%, #fef9d7 100%);
+        }
+
+        .role-icon {
+            font-size: 4em;
+            margin-bottom: 20px;
+        }
+
+        .role-name {
             font-size: 1.5em;
             font-weight: 700;
             color: #2d3748;
             margin-bottom: 10px;
         }
 
-        .menu-desc {
+        .role-desc {
             color: #4a5568;
             font-size: 0.95em;
         }
 
-        /* Game Screen */
-        .game-screen {
+        .device-info {
+            margin-top: 30px;
+            padding: 20px;
+            background: #edf2f7;
+            border-radius: 15px;
+            color: #4a5568;
+        }
+
+        /* Wasit Screen */
+        .wasit-screen {
             display: none;
             background: white;
-            border-radius: 20px;
+            border-radius: 30px;
             padding: 30px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.3);
             animation: fadeIn 0.5s ease;
         }
 
-        .game-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+        .wasit-header {
+            text-align: center;
             margin-bottom: 30px;
-            flex-wrap: wrap;
+        }
+
+        .wasit-title {
+            font-size: 2em;
+            font-weight: 700;
+            color: #2d3748;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             gap: 15px;
         }
 
-        .team-info {
-            display: flex;
-            gap: 20px;
-            flex-wrap: wrap;
-        }
-
-        .team-box {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 15px 25px;
-            border-radius: 12px;
-            text-align: center;
-            min-width: 150px;
-        }
-
-        .team-name {
+        .connection-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            border-radius: 20px;
             font-size: 0.9em;
-            opacity: 0.9;
-            margin-bottom: 5px;
+            font-weight: 600;
+            margin-top: 10px;
         }
 
-        .team-score {
-            font-size: 2em;
-            font-weight: 700;
+        .connection-status.online {
+            background: #c6f6d5;
+            color: #22543d;
         }
 
-        .timer-box {
-            background: #e53e3e;
-            color: white;
-            padding: 15px 30px;
-            border-radius: 12px;
+        .connection-status.offline {
+            background: #fed7d7;
+            color: #742a2a;
+        }
+
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        .online .status-dot {
+            background: #48bb78;
+        }
+
+        .offline .status-dot {
+            background: #f56565;
+        }
+
+        .game-controls {
+            display: grid;
+            grid-template-columns: 1fr 2fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+            align-items: start;
+        }
+
+        .team-panel {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            border-radius: 20px;
+            padding: 25px;
             text-align: center;
-            font-size: 2em;
+        }
+
+        .team-panel.active {
+            box-shadow: 0 0 0 4px #48bb78, 0 10px 30px rgba(0,0,0,0.2);
+            animation: panelPulse 2s infinite;
+        }
+
+        .team-panel.blocked {
+            opacity: 0.5;
+            filter: grayscale(0.8);
+        }
+
+        @keyframes panelPulse {
+            0%, 100% { box-shadow: 0 0 0 4px #48bb78, 0 10px 30px rgba(0,0,0,0.2); }
+            50% { box-shadow: 0 0 0 8px rgba(72, 187, 120, 0.3), 0 10px 30px rgba(0,0,0,0.2); }
+        }
+
+        .team-label {
+            font-size: 1.2em;
             font-weight: 700;
-            min-width: 120px;
+            color: #4a5568;
+            margin-bottom: 10px;
+        }
+
+        .team-status {
+            font-size: 0.9em;
+            color: #718096;
+            margin-bottom: 15px;
+            padding: 8px;
+            border-radius: 8px;
+            background: white;
+        }
+
+        .team-status.ready {
+            background: #c6f6d5;
+            color: #22543d;
+        }
+
+        .team-status.answered {
+            background: #feebc8;
+            color: #744210;
+        }
+
+        .team-status.correct {
+            background: #c6f6d5;
+            color: #22543d;
+        }
+
+        .team-status.wrong {
+            background: #fed7d7;
+            color: #742a2a;
+        }
+
+        .score-display {
+            font-size: 3em;
+            font-weight: 800;
+            color: #667eea;
+            margin: 15px 0;
+        }
+
+        .buzzer-indicator {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            margin: 15px auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2em;
             transition: all 0.3s;
+            background: #e2e8f0;
+            color: #a0aec0;
         }
 
-        .timer-box.warning {
-            background: #dd6b20;
-            animation: pulse 1s infinite;
+        .buzzer-indicator.pressed {
+            background: #48bb78;
+            color: white;
+            animation: buzzerPress 0.3s ease;
+            transform: scale(1.1);
         }
 
-        .timer-box.danger {
-            background: #e53e3e;
-            animation: pulse 0.5s infinite;
+        @keyframes buzzerPress {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1.1); }
         }
 
-        @keyframes pulse {
+        .center-panel {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 20px;
+            padding: 30px;
+            color: white;
+            text-align: center;
+        }
+
+        .timer-main {
+            font-size: 4em;
+            font-weight: 800;
+            margin: 20px 0;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .timer-main.warning {
+            color: #fbd38d;
+            animation: timerPulse 1s infinite;
+        }
+
+        .timer-main.danger {
+            color: #fc8181;
+            animation: timerPulse 0.5s infinite;
+        }
+
+        @keyframes timerPulse {
             0%, 100% { transform: scale(1); }
             50% { transform: scale(1.05); }
         }
 
-        .round-info {
-            background: #edf2f7;
-            padding: 10px 20px;
-            border-radius: 20px;
-            font-weight: 600;
-            color: #4a5568;
-        }
-
-        /* Question Section */
-        .question-section {
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-            border-radius: 20px;
-            padding: 40px;
-            margin-bottom: 30px;
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .question-number {
-            display: inline-block;
-            background: #667eea;
-            color: white;
-            padding: 8px 20px;
-            border-radius: 20px;
-            font-weight: 600;
+        .round-display {
+            font-size: 1.3em;
             margin-bottom: 20px;
-            font-size: 0.9em;
+            opacity: 0.9;
         }
 
-        .question-text {
-            font-size: 1.4em;
-            color: #2d3748;
-            line-height: 1.6;
-            font-weight: 600;
-            margin-bottom: 20px;
-        }
-
-        .question-image {
-            max-width: 300px;
-            margin: 20px auto;
-            border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-        }
-
-        /* Answer Section */
-        .answer-section {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-
-        .answer-btn {
-            padding: 25px;
-            background: white;
-            border: 3px solid #e2e8f0;
+        .question-wasit {
+            background: rgba(255,255,255,0.2);
             border-radius: 15px;
-            cursor: pointer;
-            font-size: 1.1em;
-            font-weight: 600;
-            color: #2d3748;
-            transition: all 0.3s ease;
-            text-align: left;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .answer-btn:hover:not(.disabled) {
-            border-color: #667eea;
-            background: #f7fafc;
-            transform: translateX(10px);
-        }
-
-        .answer-btn.correct {
-            background: #c6f6d5;
-            border-color: #48bb78;
-            color: #22543d;
-            animation: correctPop 0.5s ease;
-        }
-
-        .answer-btn.wrong {
-            background: #fed7d7;
-            border-color: #f56565;
-            color: #742a2a;
-            animation: shake 0.5s ease;
-        }
-
-        .answer-btn.disabled {
-            cursor: not-allowed;
-            opacity: 0.7;
-        }
-
-        @keyframes correctPop {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
-        }
-
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-10px); }
-            75% { transform: translateX(10px); }
-        }
-
-        /* Control Panel */
-        .control-panel {
+            padding: 20px;
+            margin: 20px 0;
+            font-size: 1.2em;
+            line-height: 1.6;
+            min-height: 100px;
             display: flex;
+            align-items: center;
             justify-content: center;
-            gap: 15px;
+        }
+
+        .answer-reveal {
+            background: rgba(255,255,255,0.95);
+            color: #2d3748;
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 15px;
+            font-weight: 600;
+        }
+
+        .wasit-controls {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
             flex-wrap: wrap;
+            margin-top: 20px;
         }
 
         .control-btn {
-            padding: 15px 30px;
+            padding: 12px 24px;
             border: none;
             border-radius: 10px;
             font-size: 1em;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.3s;
             display: flex;
             align-items: center;
             gap: 8px;
         }
 
-        .control-btn.primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
+        .control-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
         }
 
-        .control-btn.success {
+        .btn-start {
             background: #48bb78;
             color: white;
         }
 
-        .control-btn.danger {
+        .btn-correct {
+            background: #48bb78;
+            color: white;
+        }
+
+        .btn-wrong {
             background: #f56565;
             color: white;
         }
 
-        .control-btn.warning {
+        .btn-reveal {
             background: #ed8936;
             color: white;
         }
 
-        .control-btn:hover {
+        .btn-next {
+            background: #4299e1;
+            color: white;
+        }
+
+        .btn-reset {
+            background: #718096;
+            color: white;
+        }
+
+        .control-btn:hover:not(:disabled) {
             transform: translateY(-2px);
             box-shadow: 0 5px 15px rgba(0,0,0,0.2);
         }
 
-        /* Score Board */
-        .score-board {
+        /* Player Screen */
+        .player-screen {
             display: none;
             background: white;
-            border-radius: 20px;
+            border-radius: 30px;
             padding: 40px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-            animation: fadeIn 0.5s ease;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.3);
             text-align: center;
+            animation: fadeIn 0.5s ease;
+            max-width: 500px;
+            margin: 0 auto;
         }
 
-        .trophy {
-            font-size: 5em;
-            margin-bottom: 20px;
-            animation: bounce 2s infinite;
+        .player-header {
+            margin-bottom: 40px;
         }
 
-        @keyframes bounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-20px); }
-        }
-
-        .winner-announcement {
+        .player-title {
             font-size: 2em;
-            font-weight: 700;
-            color: #2d3748;
-            margin-bottom: 30px;
-        }
-
-        .final-scores {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-            margin: 30px 0;
-        }
-
-        .final-team-box {
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-            padding: 30px;
-            border-radius: 15px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .final-team-box.winner {
-            background: linear-gradient(135deg, #f6e05e 0%, #d69e2e 100%);
-            transform: scale(1.05);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-        }
-
-        .final-team-name {
-            font-size: 1.3em;
             font-weight: 700;
             color: #2d3748;
             margin-bottom: 10px;
         }
 
-        .final-team-score {
-            font-size: 3em;
-            font-weight: 800;
-            color: #667eea;
+        .player-role {
+            display: inline-block;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 1.1em;
         }
 
-        .final-team-box.winner .final-team-score {
+        .player-role.team-a {
+            background: #a8edea;
+            color: #234e52;
+        }
+
+        .player-role.team-b {
+            background: #d299c2;
+            color: #44337a;
+        }
+
+        .connection-info {
+            margin: 20px 0;
+            padding: 15px;
+            background: #edf2f7;
+            border-radius: 10px;
+            color: #4a5568;
+        }
+
+        .buzzer-main {
+            width: 250px;
+            height: 250px;
+            border-radius: 50%;
+            margin: 40px auto;
+            background: linear-gradient(135deg, #e53e3e 0%, #c53030 100%);
+            border: none;
+            color: white;
+            font-size: 3em;
+            font-weight: 800;
+            cursor: pointer;
+            box-shadow: 0 20px 40px rgba(229, 62, 62, 0.4);
+            transition: all 0.1s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .buzzer-main::before {
+            content: '';
+            position: absolute;
+            top: 10%;
+            left: 20%;
+            width: 30%;
+            height: 30%;
+            background: rgba(255,255,255,0.3);
+            border-radius: 50%;
+        }
+
+        .buzzer-main:active {
+            transform: scale(0.95);
+            box-shadow: 0 10px 20px rgba(229, 62, 62, 0.3);
+        }
+
+        .buzzer-main:disabled {
+            background: #cbd5e0;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        .buzzer-main.pressed {
+            background: #48bb78;
+            animation: buzzerSuccess 0.5s ease;
+        }
+
+        @keyframes buzzerSuccess {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        .buzzer-instruction {
+            margin-top: 30px;
+            font-size: 1.2em;
+            color: #4a5568;
+            line-height: 1.6;
+        }
+
+        .status-message {
+            margin-top: 30px;
+            padding: 20px;
+            border-radius: 15px;
+            font-weight: 600;
+            font-size: 1.1em;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .status-message.waiting {
+            background: #feebc8;
             color: #744210;
         }
 
-        /* Modal */
-        .modal {
+        .status-message.ready {
+            background: #c6f6d5;
+            color: #22543d;
+            animation: pulse 2s infinite;
+        }
+
+        .status-message.answered {
+            background: #bee3f8;
+            color: #2a4365;
+        }
+
+        .status-message.blocked {
+            background: #fed7d7;
+            color: #742a2a;
+        }
+
+        /* Setup Screen */
+        .setup-screen {
             display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.8);
-            z-index: 1000;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-        }
-
-        .modal-content {
             background: white;
-            border-radius: 20px;
+            border-radius: 30px;
             padding: 40px;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.3);
             max-width: 600px;
-            width: 100%;
-            text-align: center;
-            animation: modalPop 0.3s ease;
+            margin: 0 auto;
         }
 
-        @keyframes modalPop {
-            from { transform: scale(0.8); opacity: 0; }
-            to { transform: scale(1); opacity: 1; }
-        }
-
-        .modal-title {
+        .setup-title {
             font-size: 1.8em;
             font-weight: 700;
             color: #2d3748;
-            margin-bottom: 20px;
+            margin-bottom: 30px;
+            text-align: center;
         }
 
-        .input-group {
-            margin-bottom: 20px;
-            text-align: left;
+        .form-group {
+            margin-bottom: 25px;
         }
 
-        .input-group label {
+        .form-group label {
             display: block;
             margin-bottom: 8px;
             font-weight: 600;
             color: #4a5568;
         }
 
-        .input-group input, .input-group select {
+        .form-group input,
+        .form-group select {
             width: 100%;
-            padding: 12px;
+            padding: 12px 15px;
             border: 2px solid #e2e8f0;
-            border-radius: 8px;
+            border-radius: 10px;
             font-size: 1em;
             transition: border-color 0.3s;
         }
 
-        .input-group input:focus, .input-group select:focus {
+        .form-group input:focus,
+        .form-group select:focus {
             outline: none;
             border-color: #667eea;
         }
 
+        .room-code-display {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            margin: 30px 0;
+        }
+
+        .room-code-label {
+            font-size: 0.9em;
+            opacity: 0.9;
+            margin-bottom: 10px;
+        }
+
+        .room-code {
+            font-size: 3em;
+            font-weight: 800;
+            letter-spacing: 5px;
+            font-family: 'Courier New', monospace;
+        }
+
+        .room-instruction {
+            margin-top: 15px;
+            font-size: 0.95em;
+            opacity: 0.9;
+        }
+
         /* Animations */
-        @keyframes fadeInDown {
-            from { opacity: 0; transform: translateY(-30px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
         @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
         }
 
         /* Responsive */
-        @media (max-width: 768px) {
-            .header h1 { font-size: 1.8em; }
-            .answer-section { grid-template-columns: 1fr; }
-            .game-header { flex-direction: column; text-align: center; }
-            .team-info { justify-content: center; }
-            .question-text { font-size: 1.2em; }
+        @media (max-width: 968px) {
+            .game-controls {
+                grid-template-columns: 1fr;
+            }
+            .timer-main {
+                font-size: 3em;
+            }
+            .buzzer-main {
+                width: 200px;
+                height: 200px;
+                font-size: 2em;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .role-selection,
+            .wasit-screen,
+            .player-screen,
+            .setup-screen {
+                padding: 20px;
+                border-radius: 20px;
+            }
+            .role-title {
+                font-size: 1.8em;
+            }
+            .role-grid {
+                grid-template-columns: 1fr;
+            }
         }
 
         /* Utility */
         .hidden { display: none !important; }
         
-        .badge {
-            display: inline-block;
-            padding: 5px 12px;
-            border-radius: 12px;
-            font-size: 0.8em;
-            font-weight: 600;
-            margin-left: 10px;
-        }
-        
-        .badge-easy { background: #c6f6d5; color: #22543d; }
-        .badge-medium { background: #feebc8; color: #744210; }
-        .badge-hard { background: #fed7d7; color: #742a2a; }
-
-        /* Progress Bar */
-        .progress-container {
-            width: 100%;
-            height: 10px;
-            background: #e2e8f0;
-            border-radius: 5px;
-            margin-bottom: 30px;
-            overflow: hidden;
-        }
-
-        .progress-bar {
-            height: 100%;
-            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
-            transition: width 0.3s ease;
-        }
-
-        /* Sound Toggle */
-        .sound-toggle {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background: white;
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
+        .qr-placeholder {
+            width: 200px;
+            height: 200px;
+            background: #edf2f7;
+            border-radius: 10px;
+            margin: 20px auto;
             display: flex;
             align-items: center;
             justify-content: center;
-            cursor: pointer;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-            font-size: 1.5em;
-            z-index: 100;
-            transition: all 0.3s;
-        }
-
-        .sound-toggle:hover {
-            transform: scale(1.1);
+            color: #a0aec0;
+            font-size: 0.9em;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <!-- Header -->
-        <div class="header">
-            <h1>🏆 LOMBA CERDAS CERMAT ALKITAB 🏆</h1>
-            <p>Sekolah Menengah Pertama (SMP) - Kelas 7, 8 & 9</p>
-        </div>
-
-        <!-- Main Menu -->
-        <div class="main-menu" id="mainMenu">
-            <h2 style="text-align: center; color: #2d3748; margin-bottom: 10px;">Pilih Kelas</h2>
-            <p style="text-align: center; color: #718096; margin-bottom: 20px;">Sesuaikan tingkat kesulitan dengan kelas peserta</p>
+        <!-- Role Selection -->
+        <div class="role-selection" id="roleSelection">
+            <h1 class="role-title">🎮 Pilih Peran Anda</h1>
+            <p class="role-subtitle">Lomba Cerdas Cermat Alkitab - Sistem Multi-Device</p>
             
-            <div class="menu-grid">
-                <div class="menu-card kelas-7" onclick="selectClass(7)">
-                    <div class="menu-icon">📚</div>
-                    <div class="menu-title">Kelas 7</div>
-                    <div class="menu-desc">Dasar-dasar iman, kisah para patriark, dan perumpamaan Yesus sederhana</div>
+            <div class="role-grid">
+                <div class="role-card wasit" onclick="selectRole('wasit')">
+                    <div class="role-icon">👨‍⚖️</div>
+                    <div class="role-name">Wasit / Host</div>
+                    <div class="role-desc">Kontrol pertandingan, lihat jawaban, atur skor, dan kelola timer</div>
                 </div>
                 
-                <div class="menu-card kelas-8" onclick="selectClass(8)">
-                    <div class="menu-icon">🎯</div>
-                    <div class="menu-title">Kelas 8</div>
-                    <div class="menu-desc">Sejarah gereja, tokoh-tokoh Alkitab, dan doktrin dasar</div>
+                <div class="role-card pemain-a" onclick="selectRole('playerA')">
+                    <div class="role-icon">🤚</div>
+                    <div class="role-name">Pemain A</div>
+                    <div class="role-desc">Buzzer untuk Tim A. Rebutan menjawab dengan cepat!</div>
                 </div>
                 
-                <div class="menu-card kelas-9" onclick="selectClass(9)">
-                    <div class="menu-icon">🎓</div>
-                    <div class="menu-title">Kelas 9</div>
-                    <div class="menu-desc">Teologi mendalam, analisis kitab, dan aplikasi kehidupan</div>
+                <div class="role-card pemain-b" onclick="selectRole('playerB')">
+                    <div class="role-icon">✋</div>
+                    <div class="role-name">Pemain B</div>
+                    <div class="role-desc">Buzzer untuk Tim B. Rebutan menjawab dengan cepat!</div>
                 </div>
             </div>
 
-            <div style="margin-top: 30px; text-align: center;">
-                <button class="control-btn primary" onclick="showRules()">
-                    📋 Peraturan Lomba
-                </button>
+            <div class="device-info">
+                <strong>💡 Cara Kerja:</strong><br>
+                1. Wasit buka di laptop/proyektor<br>
+                2. Pemain A & B buka di HP masing-masing<br>
+                3. Semua device akan terhubung otomatis<br>
+                4. Gunakan kode ruangan yang sama
             </div>
         </div>
 
-        <!-- Setup Modal -->
-        <div class="modal" id="setupModal">
-            <div class="modal-content">
-                <h3 class="modal-title">⚙️ Pengaturan Tim</h3>
-                <div class="input-group">
-                    <label>Nama Tim A</label>
-                    <input type="text" id="teamAName" placeholder="Masukkan nama tim A" value="Tim A">
-                </div>
-                <div class="input-group">
-                    <label>Nama Tim B</label>
-                    <input type="text" id="teamBName" placeholder="Masukkan nama tim B" value="Tim B">
-                </div>
-                <div class="input-group">
-                    <label>Jumlah Ronde</label>
-                    <select id="roundCount">
-                        <option value="5">5 Ronde (Cepat)</option>
-                        <option value="10" selected>10 Ronde (Standar)</option>
-                        <option value="15">15 Ronde (Maraton)</option>
-                    </select>
-                </div>
-                <div class="input-group">
-                    <label>Waktu per Soal (detik)</label>
-                    <select id="timePerQuestion">
-                        <option value="15">15 detik (Sulit)</option>
-                        <option value="20">20 detik</option>
-                        <option value="30" selected>30 detik (Standar)</option>
-                        <option value="45">45 detik (Santai)</option>
-                    </select>
-                </div>
-                <div style="display: flex; gap: 10px; justify-content: center; margin-top: 20px;">
-                    <button class="control-btn secondary" onclick="closeModal()">Batal</button>
-                    <button class="control-btn primary" onclick="startGame()">Mulai Lomba!</button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Game Screen -->
-        <div class="game-screen" id="gameScreen">
-            <div class="game-header">
-                <div class="team-info">
-                    <div class="team-box" id="teamADisplay">
-                        <div class="team-name" id="teamANameDisplay">Tim A</div>
-                        <div class="team-score" id="teamAScore">0</div>
-                    </div>
-                    <div class="team-box" id="teamBDisplay">
-                        <div class="team-name" id="teamBNameDisplay">Tim B</div>
-                        <div class="team-score" id="teamBScore">0</div>
-                    </div>
-                </div>
-                <div class="timer-box" id="timer">30</div>
-                <div class="round-info" id="roundInfo">Ronde 1/10</div>
-            </div>
-
-            <div class="progress-container">
-                <div class="progress-bar" id="progressBar" style="width: 0%"></div>
-            </div>
-
-            <div class="question-section">
-                <div class="question-number" id="questionNumber">SOAL #1</div>
-                <div class="question-text" id="questionText">Memuat soal...</div>
-            </div>
-
-            <div class="answer-section" id="answerSection">
-                <!-- Answers will be generated here -->
-            </div>
-
-            <div class="control-panel">
-                <button class="control-btn success" onclick="awardPoints('A')">
-                    ✅ Tim A Benar (+10)
-                </button>
-                <button class="control-btn danger" onclick="awardPoints('B')">
-                    ✅ Tim B Benar (+10)
-                </button>
-                <button class="control-btn warning" onclick="showAnswer()">
-                    👁️ Lihat Jawaban
-                </button>
-                <button class="control-btn primary" onclick="nextQuestion()">
-                    ⏭️ Soal Berikutnya
-                </button>
-            </div>
-        </div>
-
-        <!-- Score Board -->
-        <div class="score-board" id="scoreBoard">
-            <div class="trophy">🏆</div>
-            <h2 class="winner-announcement" id="winnerText">Selamat!</h2>
+        <!-- Wasit Setup -->
+        <div class="setup-screen" id="wasitSetup">
+            <h2 class="setup-title">⚙️ Pengaturan Wasit</h2>
             
-            <div class="final-scores">
-                <div class="final-team-box" id="finalTeamA">
-                    <div class="final-team-name" id="finalTeamAName">Tim A</div>
-                    <div class="final-team-score" id="finalTeamAScore">0</div>
-                </div>
-                <div class="final-team-box" id="finalTeamB">
-                    <div class="final-team-name" id="finalTeamBName">Tim B</div>
-                    <div class="final-team-score" id="finalTeamBScore">0</div>
+            <div class="form-group">
+                <label>Pilih Kelas</label>
+                <select id="wasitKelas">
+                    <option value="7">Kelas 7 (Dasar)</option>
+                    <option value="8">Kelas 8 (Menengah)</option>
+                    <option value="9">Kelas 9 (Lanjut)</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Nama Tim A</label>
+                <input type="text" id="wasitTeamA" value="Tim A" placeholder="Contoh: Kelas 7A">
+            </div>
+
+            <div class="form-group">
+                <label>Nama Tim B</label>
+                <input type="text" id="wasitTeamB" value="Tim B" placeholder="Contoh: Kelas 7B">
+            </div>
+
+            <div class="form-group">
+                <label>Jumlah Ronde</label>
+                <select id="wasitRonde">
+                    <option value="5">5 Ronde</option>
+                    <option value="10" selected>10 Ronde</option>
+                    <option value="15">15 Ronde</option>
+                    <option value="20">20 Ronde</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Waktu per Soal (detik)</label>
+                <select id="wasitWaktu">
+                    <option value="10">10 detik (Sangat Cepat)</option>
+                    <option value="15">15 detik (Cepat)</option>
+                    <option value="20">20 detik</option>
+                    <option value="30" selected>30 detik (Standar)</option>
+                    <option value="45">45 detik (Santai)</option>
+                    <option value="60">60 detik (Diskusi)</option>
+                </select>
+            </div>
+
+            <div class="room-code-display">
+                <div class="room-code-label">KODE RUANGAN</div>
+                <div class="room-code" id="roomCode">ALKITAB</div>
+                <div class="room-instruction">
+                    Pemain masukkan kode ini untuk bergabung<br>
+                    atau scan QR code di bawah
                 </div>
             </div>
 
-            <div style="margin-top: 30px;">
-                <button class="control-btn primary" onclick="restartGame()">
-                    🔄 Main Lagi
-                </button>
-                <button class="control-btn secondary" onclick="backToMenu()">
-                    🏠 Menu Utama
-                </button>
+            <div class="qr-placeholder">
+                [QR Code<br>Room: ALKITAB]
+            </div>
+
+            <button class="control-btn btn-start" onclick="startWasitGame()" style="width: 100%; justify-content: center;">
+                🚀 Mulai Pertandingan
+            </button>
+        </div>
+
+        <!-- Player Setup -->
+        <div class="setup-screen" id="playerSetup">
+            <h2 class="setup-title" id="playerSetupTitle">🤚 Setup Pemain</h2>
+            
+            <div class="form-group">
+                <label>Kode Ruangan</label>
+                <input type="text" id="playerRoomCode" value="ALKITAB" placeholder="Masukkan kode dari wasit" style="text-transform: uppercase; text-align: center; font-size: 1.5em; font-weight: 700; letter-spacing: 3px;">
+            </div>
+
+            <div class="form-group">
+                <label>Nama Pemain (Opsional)</label>
+                <input type="text" id="playerName" placeholder="Nama Anda">
+            </div>
+
+            <div class="connection-info" id="playerConnectionStatus">
+                Status: Menunggu koneksi...
+            </div>
+
+            <button class="control-btn btn-start" onclick="connectPlayer()" style="width: 100%; justify-content: center;">
+                🔗 Hubungkan ke Wasit
+            </button>
+        </div>
+
+        <!-- Wasit Game Screen -->
+        <div class="wasit-screen" id="wasitScreen">
+            <div class="wasit-header">
+                <div class="wasit-title">
+                    👨‍⚖️ Panel Wasit
+                    <span class="connection-status online" id="wasitStatus">
+                        <span class="status-dot"></span>
+                        Online
+                    </span>
+                </div>
+            </div>
+
+            <div class="game-controls">
+                <!-- Team A Panel -->
+                <div class="team-panel" id="panelTeamA">
+                    <div class="team-label" id="labelTeamA">Tim A</div>
+                    <div class="team-status waiting" id="statusTeamA">Menunggu...</div>
+                    <div class="buzzer-indicator" id="buzzerTeamA">🔴</div>
+                    <div class="score-display" id="scoreTeamA">0</div>
+                    <button class="control-btn btn-correct" onclick="awardPoint('A')" id="btnCorrectA" disabled>
+                        ✅ Benar (+10)
+                    </button>
+                    <button class="control-btn btn-wrong" onclick="wrongAnswer('A')" id="btnWrongA" disabled>
+                        ❌ Salah
+                    </button>
+                </div>
+
+                <!-- Center Panel -->
+                <div class="center-panel">
+                    <div class="round-display" id="wasitRound">Ronde 1 / 10</div>
+                    <div class="timer-main" id="wasitTimer">30</div>
+                    
+                    <div class="question-wasit" id="wasitQuestion">
+                        Klik "Mulai" untuk memulai ronde pertama
+                    </div>
+
+                    <div class="answer-reveal hidden" id="wasitAnswerReveal">
+                        <strong>Jawaban:</strong> <span id="wasitCorrectAnswer">-</span>
+                        <div style="margin-top: 10px; font-size: 0.9em; font-weight: normal;" id="wasitExplanation"></div>
+                    </div>
+
+                    <div class="wasit-controls">
+                        <button class="control-btn btn-start" onclick="startRound()" id="btnStartRound">
+                            ▶️ Mulai Ronde
+                        </button>
+                        <button class="control-btn btn-reveal hidden" onclick="revealAnswer()" id="btnReveal">
+                            👁️ Lihat Jawaban
+                        </button>
+                        <button class="control-btn btn-next hidden" onclick="nextRound()" id="btnNext">
+                            ⏭️ Ronde Berikutnya
+                        </button>
+                        <button class="control-btn btn-reset" onclick="resetBuzzer()" id="btnReset">
+                            🔄 Reset Buzzer
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Team B Panel -->
+                <div class="team-panel" id="panelTeamB">
+                    <div class="team-label" id="labelTeamB">Tim B</div>
+                    <div class="team-status waiting" id="statusTeamB">Menunggu...</div>
+                    <div class="buzzer-indicator" id="buzzerTeamB">🔴</div>
+                    <div class="score-display" id="scoreTeamB">0</div>
+                    <button class="control-btn btn-correct" onclick="awardPoint('B')" id="btnCorrectB" disabled>
+                        ✅ Benar (+10)
+                    </button>
+                    <button class="control-btn btn-wrong" onclick="wrongAnswer('B')" id="btnWrongB" disabled>
+                        ❌ Salah
+                    </button>
+                </div>
             </div>
         </div>
-    </div>
 
-    <!-- Sound Toggle -->
-    <div class="sound-toggle" onclick="toggleSound()" id="soundToggle">
-        🔊
+        <!-- Player Game Screen -->
+        <div class="player-screen" id="playerScreen">
+            <div class="player-header">
+                <div class="player-title" id="playerTitle">Pemain</div>
+                <div class="player-role team-a" id="playerRoleBadge">TIM A</div>
+            </div>
+
+            <div class="connection-info" id="playerGameStatus">
+                Terhubung ke Room: <strong>ALKITAB</strong><br>
+                Menunggu wasit memulai...
+            </div>
+
+            <button class="buzzer-main" id="playerBuzzer" onclick="pressBuzzer()" disabled>
+                TAP!
+            </button>
+
+            <div class="buzzer-instruction">
+                <strong>Petunjuk:</strong><br>
+                Tekan tombol merah secepat mungkin<br>
+                setelah wasit selesai membaca soal!
+            </div>
+
+            <div class="status-message waiting" id="playerStatusMessage">
+                ⏳ Menunggu wasit memulai ronde...
+            </div>
+
+            <button class="control-btn btn-reset" onclick="backToMenu()" style="margin-top: 30px;">
+                🏠 Kembali ke Menu
+            </button>
+        </div>
+
+        <!-- Result Screen -->
+        <div class="wasit-screen hidden" id="resultScreen">
+            <div class="wasit-header">
+                <div class="wasit-title">🏆 Hasil Pertandingan</div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin: 40px 0;">
+                <div style="background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); padding: 40px; border-radius: 20px; text-align: center;" id="finalTeamA">
+                    <div style="font-size: 1.5em; font-weight: 700; color: #4a5568; margin-bottom: 20px;" id="finalNameA">Tim A</div>
+                    <div style="font-size: 4em; font-weight: 800; color: #667eea;" id="finalScoreA">0</div>
+                </div>
+                <div style="background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); padding: 40px; border-radius: 20px; text-align: center;" id="finalTeamB">
+                    <div style="font-size: 1.5em; font-weight: 700; color: #4a5568; margin-bottom: 20px;" id="finalNameB">Tim B</div>
+                    <div style="font-size: 4em; font-weight: 800; color: #667eea;" id="finalScoreB">0</div>
+                </div>
+            </div>
+
+            <div style="text-align: center; font-size: 2em; font-weight: 700; color: #2d3748; margin: 30px 0;" id="winnerDisplay">
+                🎉 Pemenang: Tim A! 🎉
+            </div>
+
+            <div style="display: flex; gap: 15px; justify-content: center;">
+                <button class="control-btn btn-start" onclick="restartGame()">🔄 Main Lagi</button>
+                <button class="control-btn btn-reset" onclick="backToMenu()">🏠 Menu Utama</button>
+            </div>
+        </div>
     </div>
 
     <script>
-        // Database Soal per Kelas
+        // Game State
+        let currentRole = null;
+        let roomCode = 'ALKITAB';
+        let gameState = {
+            teamA: { name: 'Tim A', score: 0, answered: false, correct: null },
+            teamB: { name: 'Tim B', score: 0, answered: false, correct: null },
+            currentRound: 0,
+            totalRounds: 10,
+            timePerQuestion: 30,
+            timerRunning: false,
+            questionActive: false,
+            buzzerPressed: null,
+            questions: [],
+            currentQuestion: null
+        };
+
+        // Database Soal (sama seperti sebelumnya)
         const questionDatabase = {
             7: [
-                {
-                    q: "Siapakah yang membangun bahtera besar untuk menyelamatkan hewan dari air bah?",
-                    options: ["Musa", "Nuh", "Daud", "Abraham"],
-                    correct: 1,
-                    explanation: "Nuh membangun bahtera sesuai perintah Allah (Kejadian 6-9)"
-                },
-                {
-                    q: "Berapa jumlah murid Yesus yang utama (rasul)?",
-                    options: ["10", "11", "12", "13"],
-                    correct: 2,
-                    explanation: "Yesus memilih 12 rasul (Lukas 6:13)"
-                },
-                {
-                    q: "Apa nama buku pertama dalam Perjanjian Baru?",
-                    options: ["Matius", "Markus", "Lukas", "Yohanes"],
-                    correct: 0,
-                    explanation: "Injil Matius adalah buku pertama Perjanjian Baru"
-                },
-                {
-                    q: "Siapakah ibu Yesus?",
-                    options: ["Elisabet", "Marta", "Maria", "Salome"],
-                    correct: 2,
-                    explanation: "Maria adalah ibu Yesus (Lukas 1-2)"
-                },
-                {
-                    q: "Di mana Yesus dilahirkan?",
-                    options: ["Nazaret", "Betlehem", "Yerusalem", "Yerikho"],
-                    correct: 1,
-                    explanation: "Yesus dilahirkan di Betlehem (Matius 2:1)"
-                },
-                {
-                    q: "Apa nama laut yang dibelah Musa?",
-                    options: ["Laut Mati", "Laut Tiberias", "Laut Merah", "Laut Galilea"],
-                    correct: 2,
-                    explanation: "Musa membelah Laut Merah (Keluaran 14)"
-                },
-                {
-                    q: "Siapakah yang ditolak Saulus sebelum menjadi Paulus?",
-                    options: ["Petrus", "Stefanus", "Barnabas", "Yohanes"],
-                    correct: 1,
-                    explanation: "Stefanus adalah martir pertama (Kisah 7)"
-                },
-                {
-                    q: "Berapa hari Yesus berada dalam kubur sebelum bangkit?",
-                    options: ["Satu hari", "Dua hari", "Tiga hari", "Empat hari"],
-                    correct: 2,
-                    explanation: "Yesus bangkit pada hari ketiga (Matius 16:21)"
-                },
-                {
-                    q: "Apa nama taman di mana Yesus sering berdoa?",
-                    options: ["Taman Eden", "Getsemani", "Taman Olives", "Betania"],
-                    correct: 1,
-                    explanation: "Getsemani adalah tempat Yesus berdoa sebelum ditangkap (Matius 26:36)"
-                },
-                {
-                    q: "Siapakah yang menggantikan Yudas Iskariot sebagai rasul?",
-                    options: ["Matias", "Barnabas", "Timotius", "Silas"],
-                    correct: 0,
-                    explanation: "Matias dipilih melalui undian (Kisah 1:26)"
-                },
-                {
-                    q: "Apa hukum emas yang diajarkan Yesus?",
-                    options: ["Kasihilah sesamamu manusia", "Taatilah orang tuamu", "Jangan mencuri", "Berdoalah setiap hari"],
-                    correct: 0,
-                    explanation: "Kasihilah sesamamu manusia seperti dirimu sendiri (Matius 7:12)"
-                },
-                {
-                    q: "Apa buah Roh yang pertama kali disebutkan?",
-                    options: ["Damai sejahtera", "Kasih", "Kesabaran", "Kemurahan"],
-                    correct: 1,
-                    explanation: "Kasih adalah buah Roh pertama (Galatia 5:22)"
-                },
-                {
-                    q: "Siapakah yang menjadi imam besar setelah Musa?",
-                    options: ["Hur", "Eleazar", "Harun", "Miryam"],
-                    correct: 2,
-                    explanation: "Harun adalah saudara Musa yang menjadi imam besar (Keluaran 28)"
-                },
-                {
-                    q: "Berapa umur Metusalah ketika ia mati?",
-                    options: ["777 tahun", "888 tahun", "969 tahun", "1000 tahun"],
-                    correct: 2,
-                    explanation: "Metusalah hidup 969 tahun, manusia tertua dalam Alkitab (Kejadian 5:27)"
-                },
-                {
-                    q: "Apa nama anak Daud yang memberontak melawannya?",
-                    options: ["Salomo", "Absalom", "Adonia", "Amnon"],
-                    correct: 1,
-                    explanation: "Absalom memberontak melawan Daud (2 Samuel 15)"
-                }
+                { q: "Siapakah yang membangun bahtera besar untuk menyelamatkan hewan dari air bah?", options: ["Musa", "Nuh", "Daud", "Abraham"], correct: 1, explanation: "Nuh membangun bahtera sesuai perintah Allah (Kejadian 6-9)" },
+                { q: "Berapa jumlah murid Yesus yang utama (rasul)?", options: ["10", "11", "12", "13"], correct: 2, explanation: "Yesus memilih 12 rasul (Lukas 6:13)" },
+                { q: "Apa nama buku pertama dalam Perjanjian Baru?", options: ["Matius", "Markus", "Lukas", "Yohanes"], correct: 0, explanation: "Injil Matius adalah buku pertama Perjanjian Baru" },
+                { q: "Siapakah ibu Yesus?", options: ["Elisabet", "Marta", "Maria", "Salome"], correct: 2, explanation: "Maria adalah ibu Yesus (Lukas 1-2)" },
+                { q: "Di mana Yesus dilahirkan?", options: ["Nazaret", "Betlehem", "Yerusalem", "Yerikho"], correct: 1, explanation: "Yesus dilahirkan di Betlehem (Matius 2:1)" },
+                { q: "Apa nama laut yang dibelah Musa?", options: ["Laut Mati", "Laut Tiberias", "Laut Merah", "Laut Galilea"], correct: 2, explanation: "Musa membelah Laut Merah (Keluaran 14)" },
+                { q: "Siapakah yang ditolak Saulus sebelum menjadi Paulus?", options: ["Petrus", "Stefanus", "Barnabas", "Yohanes"], correct: 1, explanation: "Stefanus adalah martir pertama (Kisah 7)" },
+                { q: "Berapa hari Yesus berada dalam kubur sebelum bangkit?", options: ["Satu hari", "Dua hari", "Tiga hari", "Empat hari"], correct: 2, explanation: "Yesus bangkit pada hari ketiga (Matius 16:21)" },
+                { q: "Apa nama taman di mana Yesus sering berdoa?", options: ["Taman Eden", "Getsemani", "Taman Olives", "Betania"], correct: 1, explanation: "Getsemani adalah tempat Yesus berdoa sebelum ditangkap (Matius 26:36)" },
+                { q: "Siapakah yang menggantikan Yudas Iskariot sebagai rasul?", options: ["Matias", "Barnabas", "Timotius", "Silas"], correct: 0, explanation: "Matias dipilih melalui undian (Kisah 1:26)" },
+                { q: "Apa hukum emas yang diajarkan Yesus?", options: ["Kasihilah sesamamu manusia", "Taatilah orang tuamu", "Jangan mencuri", "Berdoalah setiap hari"], correct: 0, explanation: "Kasihilah sesamamu manusia seperti dirimu sendiri (Matius 7:12)" },
+                { q: "Apa buah Roh yang pertama kali disebutkan?", options: ["Damai sejahtera", "Kasih", "Kesabaran", "Kemurahan"], correct: 1, explanation: "Kasih adalah buah Roh pertama (Galatia 5:22)" },
+                { q: "Siapakah yang menjadi imam besar setelah Musa?", options: ["Hur", "Eleazar", "Harun", "Miryam"], correct: 2, explanation: "Harun adalah saudara Musa yang menjadi imam besar (Keluaran 28)" },
+                { q: "Berapa umur Metusalah ketika ia mati?", options: ["777 tahun", "888 tahun", "969 tahun", "1000 tahun"], correct: 2, explanation: "Metusalah hidup 969 tahun, manusia tertua dalam Alkitab (Kejadian 5:27)" },
+                { q: "Apa nama anak Daud yang memberontak melawannya?", options: ["Salomo", "Absalom", "Adonia", "Amnon"], correct: 1, explanation: "Absalom memberontak melawan Daud (2 Samuel 15)" }
             ],
             8: [
-                {
-                    q: "Berapa tahun bangsa Israel mengembara di padang gurun?",
-                    options: ["20 tahun", "30 tahun", "40 tahun", "50 tahun"],
-                    correct: 2,
-                    explanation: "40 tahun mengembara sebelum masuk Kanaan (Bilangan 14:34)"
-                },
-                {
-                    q: "Siapakah nabi yang dimakan oleh ikan besar?",
-                    options: ["Elia", "Elisa", "Yunus", "Yesaya"],
-                    correct: 2,
-                    explanation: "Yunus dalam perut ikan 3 hari 3 malam (Yunus 1-2)"
-                },
-                {
-                    q: "Apa nama gunung di mana Musa menerima Sepuluh Perintah Allah?",
-                    options: ["Gunung Sinai", "Gunung Nebo", "Gunung Karmel", "Gunung Tabor"],
-                    correct: 0,
-                    explanation: "Gunung Sinai (juga Horeb) tempat pemberian hukum (Keluaran 19)"
-                },
-                {
-                    q: "Siapakah raja yang membangun Bait Allah pertama di Yerusalem?",
-                    options: ["Daud", "Salomo", "Yosia", "Hizkia"],
-                    correct: 1,
-                    explanation: "Salomo membangun Bait Allah (1 Raja-raja 6)"
-                },
-                {
-                    q: "Berapa banyak mujizat yang dilakukan Yesus menurut Injil Yohanes?",
-                    options: ["5", "7", "10", "12"],
-                    correct: 1,
-                    explanation: "7 tanda (mujizat) dalam Injil Yohanes (Yohanes 21:14)"
-                },
-                {
-                    q: "Siapakah yang menulis sebagian besar surat dalam Perjanjian Baru?",
-                    options: ["Petrus", "Yohanes", "Paulus", "Yakobus"],
-                    correct: 2,
-                    explanation: "Paulus menulis 13 surat (Roma - Filemon)"
-                },
-                {
-                    q: "Apa nama sungai di mana Yohanes Pembaptis membaptis Yesus?",
-                    options: ["Sungai Nil", "Sungai Yordan", "Sungai Efrat", "Sungai Tigris"],
-                    correct: 1,
-                    explanation: "Sungai Yordan (Matius 3:13)"
-                },
-                {
-                    q: "Siapakah yang mengkhianati Yesus dengan ciuman?",
-                    options: ["Petrus", "Yudas Iskariot", "Tomas", "Filipus"],
-                    correct: 1,
-                    explanation: "Yudas mengkhianati Yesus dengan ciuman (Matius 26:48)"
-                },
-                {
-                    q: "Berapa kali Petrus menyangkal Yesus sebelum ayam berkokok?",
-                    options: ["Satu kali", "Dua kali", "Tiga kali", "Empat kali"],
-                    correct: 2,
-                    explanation: "Tiga kali menyangkal (Matius 26:34)"
-                },
-                {
-                    q: "Apa nama kota di mana murid-murid pertama kali disebut 'Kristen'?",
-                    options: ["Yerusalem", "Antiokhia", "Roma", "Korintus"],
-                    correct: 1,
-                    explanation: "Pertama kali di Antiokhia (Kisah 11:26)"
-                },
-                {
-                    q: "Apa yang dimaksud dengan 'memikul salib'?",
-                    options: ["Menderita penyakit", "Mengikuti jalan penderitaan demi iman", "Membawa beban fisik", "Menghadapi kesulitan hidup"],
-                    correct: 1,
-                    explanation: "Mengikuti Yesus dengan menyangkal diri (Lukas 9:23)"
-                },
-                {
-                    q: "Apa perbedaan antara 'agape' dan 'philia'?",
-                    options: ["Tidak ada bedanya", "Agape adalah kasih ilahi, philia adalah kasih persahabatan", "Agape untuk keluarga, philia untuk teman", "Agape lebih rendah dari philia"],
-                    correct: 1,
-                    explanation: "Agape: kasih ilahi tanpa syarat, Philia: kasih persahabatan"
-                },
-                {
-                    q: "Apa yang Yesus maksud dengan 'mati miskin karena miskin'?",
-                    options: ["Tidak punya uang", "Mengandalkan Allah sepenuhnya", "Menolak kekayaan", "Hidup sederhana"],
-                    correct: 1,
-                    explanation: "Miskin di hadapan Allah = bergantung sepenuhnya pada Allah (Lukas 6:20)"
-                },
-                {
-                    q: "Apa yang diajarkan Paulus tentang tubuh kita?",
-                    options: ["Tubuh adalah milik kita", "Tubuh adalah bait Roh Kudus", "Tubuh tidak penting", "Tubuh harus disiksa"],
-                    correct: 1,
-                    explanation: "Tubuh adalah bait Roh Kudus (1 Korintus 6:19)"
-                },
-                {
-                    q: "Apa yang dimaksud dengan 'pengampunan' dalam teks Yunani 'aphesis'?",
-                    options: ["Melupakan", "Membebaskan dari hutang", "Menghukum", "Mengabaikan"],
-                    correct: 1,
-                    explanation: "Aphesis berarti melepaskan beban/hutang (Matius 6:12)"
-                }
+                { q: "Berapa tahun bangsa Israel mengembara di padang gurun?", options: ["20 tahun", "30 tahun", "40 tahun", "50 tahun"], correct: 2, explanation: "40 tahun mengembara sebelum masuk Kanaan (Bilangan 14:34)" },
+                { q: "Siapakah nabi yang dimakan oleh ikan besar?", options: ["Elia", "Elisa", "Yunus", "Yesaya"], correct: 2, explanation: "Yunus dalam perut ikan 3 hari 3 malam (Yunus 1-2)" },
+                { q: "Apa nama gunung di mana Musa menerima Sepuluh Perintah Allah?", options: ["Gunung Sinai", "Gunung Nebo", "Gunung Karmel", "Gunung Tabor"], correct: 0, explanation: "Gunung Sinai (juga Horeb) tempat pemberian hukum (Keluaran 19)" },
+                { q: "Siapakah raja yang membangun Bait Allah pertama di Yerusalem?", options: ["Daud", "Salomo", "Yosia", "Hizkia"], correct: 1, explanation: "Salomo membangun Bait Allah (1 Raja-raja 6)" },
+                { q: "Berapa banyak mujizat yang dilakukan Yesus menurut Injil Yohanes?", options: ["5", "7", "10", "12"], correct: 1, explanation: "7 tanda (mujizat) dalam Injil Yohanes (Yohanes 21:14)" },
+                { q: "Siapakah yang menulis sebagian besar surat dalam Perjanjian Baru?", options: ["Petrus", "Yohanes", "Paulus", "Yakobus"], correct: 2, explanation: "Paulus menulis 13 surat (Roma - Filemon)" },
+                { q: "Apa nama sungai di mana Yohanes Pembaptis membaptis Yesus?", options: ["Sungai Nil", "Sungai Yordan", "Sungai Efrat", "Sungai Tigris"], correct: 1, explanation: "Sungai Yordan (Matius 3:13)" },
+                { q: "Siapakah yang mengkhianati Yesus dengan ciuman?", options: ["Petrus", "Yudas Iskariot", "Tomas", "Filipus"], correct: 1, explanation: "Yudas mengkhianati Yesus dengan ciuman (Matius 26:48)" },
+                { q: "Berapa kali Petrus menyangkal Yesus sebelum ayam berkokok?", options: ["Satu kali", "Dua kali", "Tiga kali", "Empat kali"], correct: 2, explanation: "Tiga kali menyangkal (Matius 26:34)" },
+                { q: "Apa nama kota di mana murid-murid pertama kali disebut 'Kristen'?", options: ["Yerusalem", "Antiokhia", "Roma", "Korintus"], correct: 1, explanation: "Pertama kali di Antiokhia (Kisah 11:26)" },
+                { q: "Apa yang dimaksud dengan 'memikul salib'?", options: ["Menderita penyakit", "Mengikuti jalan penderitaan demi iman", "Membawa beban fisik", "Menghadapi kesulitan hidup"], correct: 1, explanation: "Mengikuti Yesus dengan menyangkal diri (Lukas 9:23)" },
+                { q: "Apa perbedaan antara 'agape' dan 'philia'?", options: ["Tidak ada bedanya", "Agape adalah kasih ilahi, philia adalah kasih persahabatan", "Agape untuk keluarga, philia untuk teman", "Agape lebih rendah dari philia"], correct: 1, explanation: "Agape: kasih ilahi tanpa syarat, Philia: kasih persahabatan" },
+                { q: "Apa yang Yesus maksud dengan 'mati miskin karena miskin'?", options: ["Tidak punya uang", "Mengandalkan Allah sepenuhnya", "Menolak kekayaan", "Hidup sederhana"], correct: 1, explanation: "Miskin di hadapan Allah = bergantung sepenuhnya pada Allah (Lukas 6:20)" },
+                { q: "Apa yang diajarkan Paulus tentang tubuh kita?", options: ["Tubuh adalah milik kita", "Tubuh adalah bait Roh Kudus", "Tubuh tidak penting", "Tubuh harus disiksa"], correct: 1, explanation: "Tubuh adalah bait Roh Kudus (1 Korintus 6:19)" },
+                { q: "Apa yang dimaksud dengan 'pengampunan' dalam teks Yunani 'aphesis'?", options: ["Melupakan", "Membebaskan dari hutang", "Menghukum", "Mengabaikan"], correct: 1, explanation: "Aphesis berarti melepaskan beban/hutang (Matius 6:12)" }
             ],
             9: [
-                {
-                    q: "Apa yang dimaksud dengan 'kenosis' dalam Filipi 2:7?",
-                    options: ["Pengosongan diri", "Pengangkatan martabat", "Penghormatan", "Kekuasaan"],
-                    correct: 0,
-                    explanation: "Yesus mengosongkan diri (mengekankan kemanusiaan-Nya) (Filipi 2:7)"
-                },
-                {
-                    q: "Apa perbedaan antara 'hamartia' dan 'paraptoma' dalam teks Yunani?",
-                    options: ["Tidak ada bedanya", "Hamartia adalah dosa yang meleset, paraptoma adalah pelanggaran", "Hamartia lebih berat", "Paraptoma lebih berat"],
-                    correct: 1,
-                    explanation: "Hamartia: meleset dari target, Paraptoma: jatuh/tersandung"
-                },
-                {
-                    q: "Apa yang dimaksud dengan 'soteria' dalam teks Yunani?",
-                    options: ["Hukuman", "Keselamatan menyeluruh", "Pengampunan", "Penebusan"],
-                    correct: 1,
-                    explanation: "Soteria: keselamatan jiwa, jasmani, sekarang dan eskatologis"
-                },
-                {
-                    q: "Apa yang diajarkan Yesaya tentang 'hamba TUHAN yang menderita'?",
-                    options: ["Israel bangkit", "Mesias akan menderita untuk dosa umat", "Nabi akan mati syahid", "Orang benar akan dianiaya"],
-                    correct: 1,
-                    explanation: "Yesaya 53 tentang Mesias yang menderita untuk dosa umat"
-                },
-                {
-                    q: "Apa yang dimaksud dengan 'dikaiosyne' dalam Roma 1:17?",
-                    options: ["Keadilan hukum", "Kebenaran Allah yang diberikan kepada orang percaya", "Kebaikan moral", "Hukum Musa"],
-                    correct: 1,
-                    explanation: "Kebenaran dari Allah oleh iman (Roma 1:17)"
-                },
-                {
-                    q: "Apa yang Yesus maksud dengan 'anak-anak dunia ini lebih cerdik'?",
-                    options: ["Mereka lebih pintar", "Mereka lebih tahu memanfaatkan kesempatan", "Mereka lebih kaya", "Mereka lebih berkuasa"],
-                    correct: 1,
-                    explanation: "Anak dunia lebih cerdik dalam memanfaatkan kesempatan (Lukas 16:8)"
-                },
-                {
-                    q: "Apa yang diajarkan Paulus tentang 'ekklesia' dalam Efesus?",
-                    options: ["Gedung gereja", "Jemaat yang adalah tubuh Kristus", "Organisasi agama", "Tempat ibadah"],
-                    correct: 1,
-                    explanation: "Ekklesia: jemaat/jemaat yang adalah tubuh Kristus (Efesus 4:11)"
-                },
-                {
-                    q: "Apa yang dimaksud dengan 'propitiasi' dalam 1 Yohanes 2:2?",
-                    options: ["Penebusan dosa", "Pendamaian melalui korban", "Pengampunan", "Pemulihan"],
-                    correct: 1,
-                    explanation: "Hilasterion: pendamaian, pemenuhan murka Allah (1 Yohanes 2:2)"
-                },
-                {
-                    q: "Apa yang Yesus maksud dengan 'kerajaan sorga sudah dekat'?",
-                    options: ["Akan datang dalam waktu lama", "Sudah hadir dalam diri-Nya", "Hanya di masa depan", "Hanya di surga"],
-                    correct: 1,
-                    explanation: "Kerajaan Allah sudah hadir dalam pelayanan Yesus (Lukas 17:21)"
-                },
-                {
-                    q: "Apa yang diajarkan Paulus tentang 'synergia' dalam Filippi?",
-                    options: ["Kerja sama dengan Allah", "Kerja keras sendiri", "Bantuan orang lain", "Kemampuan pribadi"],
-                    correct: 0,
-                    explanation: "Bekerja bersama Allah yang mengerjakan dalam kita (Filipi 2:12-13)"
-                },
-                {
-                    q: "Siapakah yang menulis 'Summa Theologica'?",
-                    options: ["Agustinus", "Thomas Aquinas", "Anselmus", "Bonaventura"],
-                    correct: 1,
-                    explanation: "Thomas Aquinas - teolog Skolastik paling berpengaruh"
-                },
-                {
-                    q: "Apa nama kontroversi teologis tentang sifat Kristus yang diputuskan di Konsili Kalsedon?",
-                    options: ["Arianisme", "Nestorianisme", "Monofisitisme", "Eutichianisme"],
-                    correct: 2,
-                    explanation: "Monofisitisme: Kristus hanya memiliki satu kodrat (ditolak)"
-                },
-                {
-                    q: "Siapakah yang memulai Reformasi Protestan dengan menempel 95 tesis?",
-                    options: ["Yohanes Calvin", "Martin Luther", "Ulrich Zwingli", "Yohanes Wycliffe"],
-                    correct: 1,
-                    explanation: "Martin Luther - 31 Oktober 1517 di Wittenberg"
-                },
-                {
-                    q: "Apa nama konsep yang diajarkan Calvin tentang pemilihan sebelum dunia diciptakan?",
-                    options: ["Predestinasi", "Arminianisme", "Pelagianisme", "Semi-Pelagianisme"],
-                    correct: 0,
-                    explanation: "Predestinasi: Allah memilih sebelum dunia dijadikan (Roma 8:29)"
-                },
-                {
-                    q: "Siapakah yang menulis 'The Pilgrim's Progress'?",
-                    options: ["John Bunyan", "John Milton", "John Donne", "John Wesley"],
-                    correct: 0,
-                    explanation: "John Bunyan - alegori perjalanan rohani (1678)"
-                }
+                { q: "Apa yang dimaksud dengan 'kenosis' dalam Filipi 2:7?", options: ["Pengosongan diri", "Pengangkatan martabat", "Penghormatan", "Kekuasaan"], correct: 0, explanation: "Yesus mengosongkan diri (mengekankan kemanusiaan-Nya) (Filipi 2:7)" },
+                { q: "Apa perbedaan antara 'hamartia' dan 'paraptoma' dalam teks Yunani?", options: ["Tidak ada bedanya", "Hamartia adalah dosa yang meleset, paraptoma adalah pelanggaran", "Hamartia lebih berat", "Paraptoma lebih berat"], correct: 1, explanation: "Hamartia: meleset dari target, Paraptoma: jatuh/tersandung" },
+                { q: "Apa yang dimaksud dengan 'soteria' dalam teks Yunani?", options: ["Hukuman", "Keselamatan menyeluruh", "Pengampunan", "Penebusan"], correct: 1, explanation: "Soteria: keselamatan jiwa, jasmani, sekarang dan eskatologis" },
+                { q: "Apa yang diajarkan Yesaya tentang 'hamba TUHAN yang menderita'?", options: ["Israel bangkit", "Mesias akan menderita untuk dosa umat", "Nabi akan mati syahid", "Orang benar akan dianiaya"], correct: 1, explanation: "Yesaya 53 tentang Mesias yang menderita untuk dosa umat" },
+                { q: "Apa yang dimaksud dengan 'dikaiosyne' dalam Roma 1:17?", options: ["Keadilan hukum", "Kebenaran Allah yang diberikan kepada orang percaya", "Kebaikan moral", "Hukum Musa"], correct: 1, explanation: "Kebenaran dari Allah oleh iman (Roma 1:17)" },
+                { q: "Apa yang Yesus maksud dengan 'anak-anak dunia ini lebih cerdik'?", options: ["Mereka lebih pintar", "Mereka lebih tahu memanfaatkan kesempatan", "Mereka lebih kaya", "Mereka lebih berkuasa"], correct: 1, explanation: "Anak dunia lebih cerdik dalam memanfaatkan kesempatan (Lukas 16:8)" },
+                { q: "Apa yang diajarkan Paulus tentang 'ekklesia' dalam Efesus?", options: ["Gedung gereja", "Jemaat yang adalah tubuh Kristus", "Organisasi agama", "Tempat ibadah"], correct: 1, explanation: "Ekklesia: jemaat/jemaat yang adalah tubuh Kristus (Efesus 4:11)" },
+                { q: "Apa yang dimaksud dengan 'propitiasi' dalam 1 Yohanes 2:2?", options: ["Penebusan dosa", "Pendamaian melalui korban", "Pengampunan", "Pemulihan"], correct: 1, explanation: "Hilasterion: pendamaian, pemenuhan murka Allah (1 Yohanes 2:2)" },
+                { q: "Apa yang Yesus maksud dengan 'kerajaan sorga sudah dekat'?", options: ["Akan datang dalam waktu lama", "Sudah hadir dalam diri-Nya", "Hanya di masa depan", "Hanya di surga"], correct: 1, explanation: "Kerajaan Allah sudah hadir dalam pelayanan Yesus (Lukas 17:21)" },
+                { q: "Apa yang diajarkan Paulus tentang 'synergia' dalam Filippi?", options: ["Kerja sama dengan Allah", "Kerja keras sendiri", "Bantuan orang lain", "Kemampuan pribadi"], correct: 0, explanation: "Bekerja bersama Allah yang mengerjakan dalam kita (Filipi 2:12-13)" },
+                { q: "Siapakah yang menulis 'Summa Theologica'?", options: ["Agustinus", "Thomas Aquinas", "Anselmus", "Bonaventura"], correct: 1, explanation: "Thomas Aquinas - teolog Skolastik paling berpengaruh" },
+                { q: "Apa nama kontroversi teologis tentang sifat Kristus yang diputuskan di Konsili Kalsedon?", options: ["Arianisme", "Nestorianisme", "Monofisitisme", "Eutichianisme"], correct: 2, explanation: "Monofisitisme: Kristus hanya memiliki satu kodrat (ditolak)" },
+                { q: "Siapakah yang memulai Reformasi Protestan dengan menempel 95 tesis?", options: ["Yohanes Calvin", "Martin Luther", "Ulrich Zwingli", "Yohanes Wycliffe"], correct: 1, explanation: "Martin Luther - 31 Oktober 1517 di Wittenberg" },
+                { q: "Apa nama konsep yang diajarkan Calvin tentang pemilihan sebelum dunia diciptakan?", options: ["Predestinasi", "Arminianisme", "Pelagianisme", "Semi-Pelagianisme"], correct: 0, explanation: "Predestinasi: Allah memilih sebelum dunia dijadikan (Roma 8:29)" },
+                { q: "Siapakah yang menulis 'The Pilgrim's Progress'?", options: ["John Bunyan", "John Milton", "John Donne", "John Wesley"], correct: 0, explanation: "John Bunyan - alegori perjalanan rohani (1678)" }
             ]
         };
 
-        // State Management
-        let currentClass = 7;
-        let currentQuestions = [];
-        let currentQuestionIndex = 0;
-        let teamA = { name: "Tim A", score: 0 };
-        let teamB = { name: "Tim B", score: 0 };
-        let timer = null;
-        let timeLeft = 30;
-        let soundEnabled = true;
-        let questionAnswered = false;
-
-        // Sound Effects (using Web Audio API)
-        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-        
-        function playSound(type) {
-            if (!soundEnabled) return;
+        // Role Selection
+        function selectRole(role) {
+            currentRole = role;
+            document.getElementById('roleSelection').style.display = 'none';
             
-            const oscillator = audioContext.createOscillator();
-            const gainNode = audioContext.createGain();
-            
-            oscillator.connect(gainNode);
-            gainNode.connect(audioContext.destination);
-            
-            switch(type) {
-                case 'correct':
-                    oscillator.frequency.setValueAtTime(523.25, audioContext.currentTime); // C5
-                    oscillator.frequency.setValueAtTime(659.25, audioContext.currentTime + 0.1); // E5
-                    gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
-                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
-                    oscillator.start(audioContext.currentTime);
-                    oscillator.stop(audioContext.currentTime + 0.5);
-                    break;
-                case 'wrong':
-                    oscillator.frequency.setValueAtTime(200, audioContext.currentTime);
-                    gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
-                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
-                    oscillator.start(audioContext.currentTime);
-                    oscillator.stop(audioContext.currentTime + 0.3);
-                    break;
-                case 'tick':
-                    oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
-                    gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
-                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
-                    oscillator.start(audioContext.currentTime);
-                    oscillator.stop(audioContext.currentTime + 0.1);
-                    break;
-                case 'win':
-                    oscillator.frequency.setValueAtTime(523.25, audioContext.currentTime);
-                    oscillator.frequency.setValueAtTime(659.25, audioContext.currentTime + 0.2);
-                    oscillator.frequency.setValueAtTime(783.99, audioContext.currentTime + 0.4);
-                    gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
-                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 1);
-                    oscillator.start(audioContext.currentTime);
-                    oscillator.stop(audioContext.currentTime + 1);
-                    break;
+            if (role === 'wasit') {
+                document.getElementById('wasitSetup').style.display = 'block';
+                // Generate random room code
+                roomCode = 'ALKITAB' + Math.floor(Math.random() * 100);
+                document.getElementById('roomCode').textContent = roomCode;
+            } else {
+                document.getElementById('playerSetup').style.display = 'block';
+                document.getElementById('playerSetupTitle').textContent = role === 'playerA' ? '🤚 Setup Pemain A' : '✋ Setup Pemain B';
+                document.getElementById('playerRoleBadge').textContent = role === 'playerA' ? 'TIM A' : 'TIM B';
+                document.getElementById('playerRoleBadge').className = 'player-role ' + (role === 'playerA' ? 'team-a' : 'team-b');
             }
         }
 
-        function toggleSound() {
-            soundEnabled = !soundEnabled;
-            document.getElementById('soundToggle').textContent = soundEnabled ? '🔊' : '🔇';
-        }
-
-        function selectClass(classNum) {
-            currentClass = classNum;
-            document.getElementById('setupModal').style.display = 'flex';
-        }
-
-        function closeModal() {
-            document.getElementById('setupModal').style.display = 'none';
-        }
-
-        function startGame() {
+        // Wasit Functions
+        function startWasitGame() {
             // Get settings
-            teamA.name = document.getElementById('teamAName').value || "Tim A";
-            teamB.name = document.getElementById('teamBName').value || "Tim B";
-            const roundCount = parseInt(document.getElementById('roundCount').value);
-            timeLeft = parseInt(document.getElementById('timePerQuestion').value);
+            const kelas = document.getElementById('wasitKelas').value;
+            gameState.teamA.name = document.getElementById('wasitTeamA').value || 'Tim A';
+            gameState.teamB.name = document.getElementById('wasitTeamB').value || 'Tim B';
+            gameState.totalRounds = parseInt(document.getElementById('wasitRonde').value);
+            gameState.timePerQuestion = parseInt(document.getElementById('wasitWaktu').value);
             
             // Initialize questions
-            const allQuestions = [...questionDatabase[currentClass]];
-            // Shuffle and select
-            currentQuestions = shuffleArray(allQuestions).slice(0, roundCount);
-            
-            // Reset scores
-            teamA.score = 0;
-            teamB.score = 0;
-            currentQuestionIndex = 0;
+            const allQuestions = [...questionDatabase[kelas]];
+            gameState.questions = shuffleArray(allQuestions).slice(0, gameState.totalRounds);
             
             // Update UI
-            document.getElementById('teamANameDisplay').textContent = teamA.name;
-            document.getElementById('teamBNameDisplay').textContent = teamB.name;
-            document.getElementById('teamAScore').textContent = "0";
-            document.getElementById('teamBScore').textContent = "0";
+            document.getElementById('labelTeamA').textContent = gameState.teamA.name;
+            document.getElementById('labelTeamB').textContent = gameState.teamB.name;
+            document.getElementById('scoreTeamA').textContent = '0';
+            document.getElementById('scoreTeamB').textContent = '0';
             
-            // Hide menu, show game
-            document.getElementById('mainMenu').style.display = 'none';
-            document.getElementById('setupModal').style.display = 'none';
-            document.getElementById('gameScreen').style.display = 'block';
-            document.getElementById('scoreBoard').style.display = 'none';
+            // Hide setup, show game
+            document.getElementById('wasitSetup').style.display = 'none';
+            document.getElementById('wasitScreen').style.display = 'block';
             
-            loadQuestion();
+            // Start sync simulation
+            startSyncSimulation();
         }
 
         function shuffleArray(array) {
@@ -1098,212 +1045,347 @@
             return newArray;
         }
 
-        function loadQuestion() {
-            if (currentQuestionIndex >= currentQuestions.length) {
+        let timerInterval = null;
+
+        function startRound() {
+            if (gameState.currentRound >= gameState.totalRounds) {
                 endGame();
                 return;
             }
             
-            const q = currentQuestions[currentQuestionIndex];
-            questionAnswered = false;
+            gameState.currentRound++;
+            gameState.currentQuestion = gameState.questions[gameState.currentRound - 1];
+            gameState.buzzerPressed = null;
+            gameState.questionActive = true;
             
-            // Update UI
-            document.getElementById('roundInfo').textContent = `Ronde ${currentQuestionIndex + 1}/${currentQuestions.length}`;
-            document.getElementById('questionNumber').textContent = `SOAL #${currentQuestionIndex + 1}`;
-            document.getElementById('questionText').textContent = q.q;
+            // Reset panels
+            document.getElementById('panelTeamA').classList.remove('active', 'blocked');
+            document.getElementById('panelTeamB').classList.remove('active', 'blocked');
+            document.getElementById('statusTeamA').textContent = 'Siap!';
+            document.getElementById('statusTeamA').className = 'team-status ready';
+            document.getElementById('statusTeamB').textContent = 'Siap!';
+            document.getElementById('statusTeamB').className = 'team-status ready';
+            document.getElementById('buzzerTeamA').textContent = '🔴';
+            document.getElementById('buzzerTeamA').classList.remove('pressed');
+            document.getElementById('buzzerTeamB').textContent = '🔴';
+            document.getElementById('buzzerTeamB').classList.remove('pressed');
             
-            // Update progress bar
-            const progress = ((currentQuestionIndex) / currentQuestions.length) * 100;
-            document.getElementById('progressBar').style.width = progress + '%';
+            // Disable buttons
+            document.getElementById('btnCorrectA').disabled = true;
+            document.getElementById('btnWrongA').disabled = true;
+            document.getElementById('btnCorrectB').disabled = true;
+            document.getElementById('btnWrongB').disabled = true;
             
-            // Generate answer buttons
-            const answerSection = document.getElementById('answerSection');
-            answerSection.innerHTML = '';
+            // Update display
+            document.getElementById('wasitRound').textContent = `Ronde ${gameState.currentRound} / ${gameState.totalRounds}`;
+            document.getElementById('wasitQuestion').textContent = gameState.currentQuestion.q;
+            document.getElementById('wasitAnswerReveal').classList.add('hidden');
+            document.getElementById('btnStartRound').classList.add('hidden');
+            document.getElementById('btnReveal').classList.remove('hidden');
+            document.getElementById('btnNext').classList.add('hidden');
             
-            q.options.forEach((opt, idx) => {
-                const btn = document.createElement('button');
-                btn.className = 'answer-btn';
-                btn.textContent = `${String.fromCharCode(65 + idx)}. ${opt}`;
-                btn.onclick = () => selectAnswer(idx);
-                answerSection.appendChild(btn);
-            });
+            // Start timer
+            let timeLeft = gameState.timePerQuestion;
+            const timerDisplay = document.getElementById('wasitTimer');
+            timerDisplay.textContent = timeLeft;
+            timerDisplay.className = 'timer-main';
             
-            // Reset timer
-            resetTimer();
-        }
-
-        function resetTimer() {
-            clearInterval(timer);
-            const timerDisplay = document.getElementById('timer');
-            let time = parseInt(document.getElementById('timePerQuestion').value);
-            timerDisplay.textContent = time;
-            timerDisplay.className = 'timer-box';
-            
-            timer = setInterval(() => {
-                time--;
-                timerDisplay.textContent = time;
+            clearInterval(timerInterval);
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                timerDisplay.textContent = timeLeft;
                 
-                if (time <= 10) {
-                    timerDisplay.className = 'timer-box danger';
-                    playSound('tick');
-                } else if (time <= 20) {
-                    timerDisplay.className = 'timer-box warning';
+                if (timeLeft <= 10) {
+                    timerDisplay.className = 'timer-main danger';
+                } else if (timeLeft <= 20) {
+                    timerDisplay.className = 'timer-main warning';
                 }
                 
-                if (time <= 0) {
-                    clearInterval(timer);
-                    showAnswer();
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    timeUp();
                 }
             }, 1000);
+            
+            // Broadcast to players (simulated)
+            broadcastToPlayers('ROUND_START', {
+                round: gameState.currentRound,
+                question: gameState.currentQuestion.q
+            });
         }
 
-        function selectAnswer(index) {
-            if (questionAnswered) return;
+        function timeUp() {
+            gameState.questionActive = false;
+            document.getElementById('wasitTimer').textContent = '0';
+            document.getElementById('statusTeamA').textContent = 'Waktu habis!';
+            document.getElementById('statusTeamB').textContent = 'Waktu habis!';
+            document.getElementById('btnReveal').classList.remove('hidden');
+            broadcastToPlayers('TIME_UP', {});
+        }
+
+        function revealAnswer() {
+            clearInterval(timerInterval);
+            const q = gameState.currentQuestion;
+            document.getElementById('wasitCorrectAnswer').textContent = q.options[q.correct];
+            document.getElementById('wasitExplanation').textContent = q.explanation;
+            document.getElementById('wasitAnswerReveal').classList.remove('hidden');
+            document.getElementById('btnReveal').classList.add('hidden');
+            document.getElementById('btnNext').classList.remove('hidden');
             
-            const q = currentQuestions[currentQuestionIndex];
-            const buttons = document.querySelectorAll('.answer-btn');
-            
-            buttons.forEach((btn, idx) => {
-                btn.classList.add('disabled');
-                if (idx === q.correct) {
-                    btn.classList.add('correct');
-                } else if (idx === index && idx !== q.correct) {
-                    btn.classList.add('wrong');
-                }
-            });
-            
-            if (index === q.correct) {
-                playSound('correct');
-            } else {
-                playSound('wrong');
+            if (gameState.buzzerPressed) {
+                const team = gameState.buzzerPressed;
+                document.getElementById('btnCorrect' + team).disabled = false;
+                document.getElementById('btnWrong' + team).disabled = false;
             }
             
-            questionAnswered = true;
-            clearInterval(timer);
-        }
-
-        function showAnswer() {
-            const q = currentQuestions[currentQuestionIndex];
-            const buttons = document.querySelectorAll('.answer-btn');
-            
-            buttons.forEach((btn, idx) => {
-                btn.classList.add('disabled');
-                if (idx === q.correct) {
-                    btn.classList.add('correct');
-                }
+            broadcastToPlayers('ANSWER_REVEAL', {
+                correct: q.correct,
+                explanation: q.explanation
             });
-            
-            // Show explanation
-            setTimeout(() => {
-                alert(`💡 Penjelasan:\n${q.explanation}`);
-            }, 500);
-            
-            questionAnswered = true;
-            clearInterval(timer);
         }
 
-        function awardPoints(team) {
-            if (!questionAnswered) {
-                alert('Tunjukkan jawaban terlebih dahulu!');
-                return;
-            }
-            
+        function awardPoint(team) {
             if (team === 'A') {
-                teamA.score += 10;
-                document.getElementById('teamAScore').textContent = teamA.score;
-                document.getElementById('teamADisplay').style.animation = 'pulse 0.5s';
+                gameState.teamA.score += 10;
+                document.getElementById('scoreTeamA').textContent = gameState.teamA.score;
+                document.getElementById('statusTeamA').textContent = '✅ Benar! +10';
+                document.getElementById('statusTeamA').className = 'team-status correct';
+                document.getElementById('panelTeamA').classList.remove('active');
             } else {
-                teamB.score += 10;
-                document.getElementById('teamBScore').textContent = teamB.score;
-                document.getElementById('teamBDisplay').style.animation = 'pulse 0.5s';
+                gameState.teamB.score += 10;
+                document.getElementById('scoreTeamB').textContent = gameState.teamB.score;
+                document.getElementById('statusTeamB').textContent = '✅ Benar! +10';
+                document.getElementById('statusTeamB').className = 'team-status correct';
+                document.getElementById('panelTeamB').classList.remove('active');
             }
             
-            setTimeout(() => {
-                document.getElementById('teamADisplay').style.animation = '';
-                document.getElementById('teamBDisplay').style.animation = '';
-            }, 500);
+            document.getElementById('btnCorrectA').disabled = true;
+            document.getElementById('btnWrongA').disabled = true;
+            document.getElementById('btnCorrectB').disabled = true;
+            document.getElementById('btnWrongB').disabled = true;
+            
+            broadcastToPlayers('POINT_AWARDED', { team: team, score: team === 'A' ? gameState.teamA.score : gameState.teamB.score });
         }
 
-        function nextQuestion() {
-            currentQuestionIndex++;
-            loadQuestion();
+        function wrongAnswer(team) {
+            if (team === 'A') {
+                document.getElementById('statusTeamA').textContent = '❌ Salah!';
+                document.getElementById('statusTeamA').className = 'team-status wrong';
+                document.getElementById('panelTeamA').classList.remove('active');
+                // Unlock team B if not answered
+                if (!gameState.buzzerPressed || gameState.buzzerPressed === 'B') {
+                    document.getElementById('panelTeamB').classList.remove('blocked');
+                    document.getElementById('statusTeamB').textContent = 'Kesempatan!';
+                }
+            } else {
+                document.getElementById('statusTeamB').textContent = '❌ Salah!';
+                document.getElementById('statusTeamB').className = 'team-status wrong';
+                document.getElementById('panelTeamB').classList.remove('active');
+                if (!gameState.buzzerPressed || gameState.buzzerPressed === 'A') {
+                    document.getElementById('panelTeamA').classList.remove('blocked');
+                    document.getElementById('statusTeamA').textContent = 'Kesempatan!';
+                }
+            }
+            
+            document.getElementById('btnCorrectA').disabled = true;
+            document.getElementById('btnWrongA').disabled = true;
+            document.getElementById('btnCorrectB').disabled = true;
+            document.getElementById('btnWrongB').disabled = true;
+            
+            broadcastToPlayers('WRONG_ANSWER', { team: team });
+        }
+
+        function nextRound() {
+            document.getElementById('btnNext').classList.add('hidden');
+            document.getElementById('btnStartRound').classList.remove('hidden');
+            document.getElementById('btnStartRound').textContent = '▶️ Mulai Ronde ' + (gameState.currentRound + 1);
+            document.getElementById('wasitQuestion').textContent = 'Klik "Mulai Ronde" untuk soal berikutnya';
+            document.getElementById('wasitTimer').textContent = gameState.timePerQuestion;
+            document.getElementById('wasitTimer').className = 'timer-main';
+            
+            broadcastToPlayers('ROUND_END', { nextRound: gameState.currentRound + 1 });
+        }
+
+        function resetBuzzer() {
+            gameState.buzzerPressed = null;
+            document.getElementById('panelTeamA').classList.remove('active', 'blocked');
+            document.getElementById('panelTeamB').classList.remove('active', 'blocked');
+            document.getElementById('statusTeamA').textContent = 'Siap!';
+            document.getElementById('statusTeamA').className = 'team-status ready';
+            document.getElementById('statusTeamB').textContent = 'Siap!';
+            document.getElementById('statusTeamB').className = 'team-status ready';
+            document.getElementById('buzzerTeamA').textContent = '🔴';
+            document.getElementById('buzzerTeamA').classList.remove('pressed');
+            document.getElementById('buzzerTeamB').textContent = '🔴';
+            document.getElementById('buzzerTeamB').classList.remove('pressed');
+            document.getElementById('btnCorrectA').disabled = true;
+            document.getElementById('btnWrongA').disabled = true;
+            document.getElementById('btnCorrectB').disabled = true;
+            document.getElementById('btnWrongB').disabled = true;
+            
+            // Resume timer if not revealed
+            if (gameState.questionActive && !document.getElementById('wasitAnswerReveal').classList.contains('hidden')) {
+                // Don't resume if answer revealed
+            }
+            
+            broadcastToPlayers('BUZZER_RESET', {});
         }
 
         function endGame() {
-            playSound('win');
-            document.getElementById('gameScreen').style.display = 'none';
-            document.getElementById('scoreBoard').style.display = 'block';
+            clearInterval(timerInterval);
+            document.getElementById('wasitScreen').style.display = 'none';
+            document.getElementById('resultScreen').classList.remove('hidden');
+            document.getElementById('resultScreen').style.display = 'block';
             
-            // Update final scores
-            document.getElementById('finalTeamAName').textContent = teamA.name;
-            document.getElementById('finalTeamBName').textContent = teamB.name;
-            document.getElementById('finalTeamAScore').textContent = teamA.score;
-            document.getElementById('finalTeamBScore').textContent = teamB.score;
+            document.getElementById('finalNameA').textContent = gameState.teamA.name;
+            document.getElementById('finalNameB').textContent = gameState.teamB.name;
+            document.getElementById('finalScoreA').textContent = gameState.teamA.score;
+            document.getElementById('finalScoreB').textContent = gameState.teamB.score;
             
-            // Determine winner
-            const teamABox = document.getElementById('finalTeamA');
-            const teamBBox = document.getElementById('finalTeamB');
-            const winnerText = document.getElementById('winnerText');
-            
-            teamABox.classList.remove('winner');
-            teamBBox.classList.remove('winner');
-            
-            if (teamA.score > teamB.score) {
-                teamABox.classList.add('winner');
-                winnerText.textContent = `🏆 Selamat ${teamA.name}! 🏆`;
-            } else if (teamB.score > teamA.score) {
-                teamBBox.classList.add('winner');
-                winnerText.textContent = `🏆 Selamat ${teamB.name}! 🏆`;
+            const winnerDisplay = document.getElementById('winnerDisplay');
+            if (gameState.teamA.score > gameState.teamB.score) {
+                winnerDisplay.textContent = `🎉 Pemenang: ${gameState.teamA.name}! 🎉`;
+                document.getElementById('finalTeamA').style.background = 'linear-gradient(135deg, #f6e05e 0%, #d69e2e 100%)';
+            } else if (gameState.teamB.score > gameState.teamA.score) {
+                winnerDisplay.textContent = `🎉 Pemenang: ${gameState.teamB.name}! 🎉`;
+                document.getElementById('finalTeamB').style.background = 'linear-gradient(135deg, #f6e05e 0%, #d69e2e 100%)';
             } else {
-                winnerText.textContent = '🤝 Seri! 🤝';
+                winnerDisplay.textContent = '🤝 Seri! 🤝';
+            }
+            
+            broadcastToPlayers('GAME_END', {
+                winner: gameState.teamA.score > gameState.teamB.score ? 'A' : gameState.teamB.score > gameState.teamA.score ? 'B' : 'draw',
+                scoreA: gameState.teamA.score,
+                scoreB: gameState.teamB.score
+            });
+        }
+
+        // Player Functions
+        function connectPlayer() {
+            const inputCode = document.getElementById('playerRoomCode').value.toUpperCase();
+            const statusDiv = document.getElementById('playerConnectionStatus');
+            
+            if (inputCode !== roomCode && inputCode !== 'ALKITAB') {
+                statusDiv.textContent = '❌ Kode salah! Coba lagi.';
+                statusDiv.style.background = '#fed7d7';
+                statusDiv.style.color = '#742a2a';
+                return;
+            }
+            
+            statusDiv.textContent = '✅ Terhubung! Menunggu wasit...';
+            statusDiv.style.background = '#c6f6d5';
+            statusDiv.style.color = '#22543d';
+            
+            setTimeout(() => {
+                document.getElementById('playerSetup').style.display = 'none';
+                document.getElementById('playerScreen').style.display = 'block';
+                document.getElementById('playerBuzzer').disabled = false;
+            }, 1000);
+        }
+
+        function pressBuzzer() {
+            if (!gameState.questionActive || gameState.buzzerPressed) return;
+            
+            const team = currentRole === 'playerA' ? 'A' : 'B';
+            const otherTeam = team === 'A' ? 'B' : 'A';
+            
+            gameState.buzzerPressed = team;
+            
+            // Update player UI
+            document.getElementById('playerBuzzer').classList.add('pressed');
+            document.getElementById('playerBuzzer').textContent = '✅';
+            document.getElementById('playerBuzzer').disabled = true;
+            document.getElementById('playerStatusMessage').textContent = '🎉 Anda menekan buzzer pertama!';
+            document.getElementById('playerStatusMessage').className = 'status-message answered';
+            
+            // Simulate sending to wasit (in real app, use WebSocket)
+            setTimeout(() => {
+                // Wasit receives buzzer press
+                document.getElementById('panelTeam' + team).classList.add('active');
+                document.getElementById('panelTeam' + otherTeam).classList.add('blocked');
+                document.getElementById('buzzerTeam' + team).textContent = '⚡';
+                document.getElementById('buzzerTeam' + team).classList.add('pressed');
+                document.getElementById('statusTeam' + team).textContent = 'Menjawab...';
+                document.getElementById('statusTeam' + team).className = 'team-status answered';
+                document.getElementById('statusTeam' + otherTeam).textContent = 'Menunggu...';
+                document.getElementById('statusTeam' + otherTeam).className = 'team-status waiting';
+                
+                // Enable wasit buttons
+                document.getElementById('btnCorrect' + team).disabled = false;
+                document.getElementById('btnWrong' + team).disabled = false;
+            }, 100);
+        }
+
+        // Simulation of real-time sync (replace with actual WebSocket in production)
+        function startSyncSimulation() {
+            // In real implementation, this would connect to WebSocket server
+            console.log('Sync started for room:', roomCode);
+        }
+
+        function broadcastToPlayers(type, data) {
+            // In real implementation, this would send via WebSocket
+            console.log('Broadcast:', type, data);
+            
+            // Simulate player receiving
+            if (type === 'ROUND_START') {
+                document.getElementById('playerGameStatus').innerHTML = `Ronde ${data.round} dimulai!<br>Siap-siap...`;
+                document.getElementById('playerStatusMessage').textContent = '⏳ Siap tekan buzzer!';
+                document.getElementById('playerStatusMessage').className = 'status-message ready';
+                document.getElementById('playerBuzzer').classList.remove('pressed');
+                document.getElementById('playerBuzzer').textContent = 'TAP!';
+                document.getElementById('playerBuzzer').disabled = false;
+            } else if (type === 'TIME_UP') {
+                document.getElementById('playerStatusMessage').textContent = '⏰ Waktu habis!';
+                document.getElementById('playerStatusMessage').className = 'status-message waiting';
+                document.getElementById('playerBuzzer').disabled = true;
+            } else if (type === 'ANSWER_REVEAL') {
+                document.getElementById('playerStatusMessage').textContent = 'Jawaban: ' + data.correct;
+            } else if (type === 'POINT_AWARDED') {
+                const myTeam = currentRole === 'playerA' ? 'A' : 'B';
+                if (data.team === myTeam) {
+                    document.getElementById('playerStatusMessage').textContent = '🎉 Tim Anda benar! +' + (data.score - (data.team === 'A' ? gameState.teamA.score - 10 : gameState.teamB.score - 10)) + ' poin';
+                } else {
+                    document.getElementById('playerStatusMessage').textContent = 'Tim lawan benar...';
+                }
+            } else if (type === 'WRONG_ANSWER') {
+                const myTeam = currentRole === 'playerA' ? 'A' : 'B';
+                if (data.team === myTeam) {
+                    document.getElementById('playerStatusMessage').textContent = '❌ Jawaban salah';
+                } else {
+                    document.getElementById('playerStatusMessage').textContent = 'Kesempatan untuk tim Anda!';
+                    document.getElementById('playerBuzzer').disabled = false;
+                }
+            } else if (type === 'BUZZER_RESET') {
+                document.getElementById('playerBuzzer').classList.remove('pressed');
+                document.getElementById('playerBuzzer').textContent = 'TAP!';
+                document.getElementById('playerStatusMessage').textContent = '⏳ Siap tekan buzzer!';
+                document.getElementById('playerStatusMessage').className = 'status-message ready';
+            } else if (type === 'GAME_END') {
+                document.getElementById('playerStatusMessage').textContent = '🏆 Pertandingan selesai!';
+                document.getElementById('playerBuzzer').disabled = true;
             }
         }
 
+        // Utility Functions
         function restartGame() {
-            startGame();
+            gameState.currentRound = 0;
+            gameState.teamA.score = 0;
+            gameState.teamB.score = 0;
+            gameState.buzzerPressed = null;
+            gameState.questionActive = false;
+            
+            document.getElementById('resultScreen').style.display = 'none';
+            document.getElementById('wasitSetup').style.display = 'block';
         }
 
         function backToMenu() {
-            document.getElementById('scoreBoard').style.display = 'none';
-            document.getElementById('gameScreen').style.display = 'none';
-            document.getElementById('mainMenu').style.display = 'block';
-            clearInterval(timer);
+            location.reload();
         }
 
-        function showRules() {
-            alert(`📋 PERATURAN LOMBA CERDAS CERMAT ALKITAB 📋
-
-🎯 Sistem Penilaian:
-• Jawaban benar: +10 poin
-• Tidak ada pengurangan poin untuk jawaban salah
-• Waktu dibatasi per soal
-
-⏱️ Mekanisme Permainan:
-1. Pembaca akan membacakan soal
-2. Tim dapat menjawab setelah lampu hijau (atau setelah soal selesai dibaca)
-3. Jawaban harus disertai dengan alasan/ayat pendukung (untuk kelas 8-9)
-4. Wasit menentukan jawaban benar/salah
-
-🏆 Kriteria Kemenangan:
-• Tim dengan skor tertinggi menang
-• Jika seri, ada soal tie-breaker
-
-💡 Tips:
-• Baca Alkitab secara rutin
-• Hafalkan ayat-ayat kunci
-• Pahami konteks sejarah dan budaya
-• Kerjasama tim sangat penting
-
-Semoga sukses! 🙏`);
-        }
-
-        // Close modal when clicking outside
-        window.onclick = function(event) {
-            const modal = document.getElementById('setupModal');
-            if (event.target === modal) {
-                closeModal();
-            }
-        }
+        // Prevent zoom on double tap for mobile
+        document.addEventListener('dblclick', function(event) {
+            event.preventDefault();
+        }, { passive: false });
     </script>
 </body>
 </html>
