@@ -138,6 +138,7 @@
             font-weight: bold;
             width: 100%;
             transition: transform 0.2s;
+            margin-bottom: 10px;
         }
 
         .btn:hover {
@@ -147,6 +148,22 @@
         .btn:disabled {
             opacity: 0.6;
             cursor: not-allowed;
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #eb3349 0%, #f45c43 100%);
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
         }
 
         .otp-display {
@@ -273,22 +290,12 @@
             display: flex;
             gap: 10px;
             margin-top: 20px;
+            flex-wrap: wrap;
         }
 
         .controls .btn {
             flex: 1;
-        }
-
-        .btn-success {
-            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
-        }
-
-        .btn-danger {
-            background: linear-gradient(135deg, #eb3349 0%, #f45c43 100%);
-        }
-
-        .btn-warning {
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            min-width: 200px;
         }
 
         .waiting-room {
@@ -327,11 +334,11 @@
             justify-content: center;
             gap: 30px;
             margin: 30px 0;
+            flex-wrap: wrap;
         }
 
         .back-btn {
             margin-top: 20px;
-            background: #6c757d;
         }
 
         .progress-bar {
@@ -355,6 +362,24 @@
             padding: 15px;
             margin-bottom: 20px;
             border-radius: 5px;
+        }
+
+        .alert {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
         }
 
         table {
@@ -382,6 +407,21 @@
             font-weight: bold;
         }
 
+        .player-list {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+
+        .player-item {
+            padding: 10px;
+            margin: 5px 0;
+            background: white;
+            border-radius: 5px;
+            border-left: 4px solid #667eea;
+        }
+
         @media (max-width: 600px) {
             .container {
                 padding: 20px;
@@ -393,6 +433,10 @@
             
             .score-board {
                 grid-template-columns: 1fr;
+            }
+            
+            .controls .btn {
+                min-width: 100%;
             }
         }
     </style>
@@ -432,7 +476,7 @@
                 <div id="otpSection" class="hidden">
                     <div class="info-box">
                         <strong>Instruksi:</strong> Berikan kode OTP di bawah ini kepada 2 pemain. 
-                        Kode akan kadaluarsa dalam 5 menit.
+                        Kode akan kadaluarsa dalam 5 menit. Pemain harus memasukkan OTP dan nama mereka di menu Pemain.
                     </div>
                     
                     <div class="otp-display">
@@ -440,16 +484,24 @@
                         <div class="timer" id="otpTimer">Berlaku: 5:00</div>
                     </div>
 
+                    <div class="player-list">
+                        <h3>Pemain yang Terhubung:</h3>
+                        <div id="connectedPlayers">
+                            <p style="color: #666; font-style: italic;">Belum ada pemain yang terhubung...</p>
+                        </div>
+                    </div>
+
                     <div class="form-group">
-                        <label>Nama Pemain 1:</label>
+                        <label>Nama Pemain 1 (Opsional - jika berbeda dari yang terdaftar):</label>
                         <input type="text" id="player1Name" placeholder="Masukkan nama pemain 1">
                     </div>
                     <div class="form-group">
-                        <label>Nama Pemain 2:</label>
+                        <label>Nama Pemain 2 (Opsional - jika berbeda dari yang terdaftar):</label>
                         <input type="text" id="player2Name" placeholder="Masukkan nama pemain 2">
                     </div>
 
-                    <button class="btn btn-success" onclick="startGame()">Mulai Lomba</button>
+                    <button class="btn btn-success" onclick="startGame()" id="startGameBtn" disabled>Mulai Lomba (Perlu 2 Pemain)</button>
+                    <button class="btn btn-secondary" onclick="generateOTP()">Generate OTP Baru</button>
                 </div>
             </div>
 
@@ -479,55 +531,94 @@
                 </div>
 
                 <div class="controls">
-                    <button class="btn btn-success" onclick="correctAnswer(1)">✓ Pemain 1 Benar</button>
-                    <button class="btn btn-success" onclick="correctAnswer(2)">✓ Pemain 2 Benar</button>
+                    <button class="btn btn-success" onclick="correctAnswer(1)">✓ Pemain 1 Benar (+10)</button>
+                    <button class="btn btn-success" onclick="correctAnswer(2)">✓ Pemain 2 Benar (+10)</button>
                 </div>
                 <div class="controls">
-                    <button class="btn btn-danger" onclick="wrongAnswer(1)">✗ Pemain 1 Salah</button>
-                    <button class="btn btn-danger" onclick="wrongAnswer(2)">✗ Pemain 2 Salah</button>
+                    <button class="btn btn-danger" onclick="wrongAnswer(1)">✗ Pemain 1 Salah (-5)</button>
+                    <button class="btn btn-danger" onclick="wrongAnswer(2)">✗ Pemain 2 Salah (-5)</button>
                 </div>
                 <div class="controls">
                     <button class="btn btn-warning" onclick="nextQuestion()">Soal Berikutnya →</button>
-                    <button class="btn" onclick="endGame()">Akhiri Lomba</button>
+                    <button class="btn btn-secondary" onclick="endGame()">Akhiri Lomba</button>
                 </div>
             </div>
 
-            <button class="btn back-btn" onclick="backToMenu()">← Kembali ke Menu</button>
+            <button class="btn btn-secondary back-btn" onclick="backToMenu()">← Kembali ke Menu</button>
         </div>
 
         <!-- Panel Pemain -->
         <div id="playerPanel" class="section hidden">
-            <h2>Masuk Sebagai Pemain</h2>
+            <h2>Halaman Pemain</h2>
             
             <div id="playerLogin">
+                <div class="info-box">
+                    <strong>Petunjuk:</strong> Masukkan kode OTP yang diberikan wasit dan nama lengkap Anda.
+                </div>
+                
                 <div class="form-group">
-                    <label>Masukkan Kode OTP dari Wasit:</label>
-                    <input type="text" id="otpInput" placeholder="Contoh: 1234" maxlength="4">
+                    <label>Kode OTP (4 digit):</label>
+                    <input type="text" id="otpInput" placeholder="Contoh: 1234" maxlength="4" pattern="\d*">
                 </div>
                 <div class="form-group">
-                    <label>Nama Anda:</label>
-                    <input type="text" id="playerNameInput" placeholder="Masukkan nama lengkap">
+                    <label>Nama Lengkap:</label>
+                    <input type="text" id="playerNameInput" placeholder="Masukkan nama lengkap Anda">
                 </div>
                 <button class="btn" onclick="joinGame()">Gabung ke Lomba</button>
+                <div id="loginMessage"></div>
             </div>
 
             <div id="playerWait" class="waiting-room hidden">
                 <div class="spinner"></div>
-                <h3>Menunggu wasit memulai...</h3>
-                <p>Anda telah terhubung sebagai <span id="connectedName"></span></p>
+                <h3>Menunggu wasit memulai lomba...</h3>
+                <p>Anda telah terhubung sebagai <strong id="connectedName"></strong></p>
+                <p style="margin-top: 20px; color: #666;">Tunggu wasit memulai pertandingan. Jangan tutup halaman ini!</p>
             </div>
 
             <div id="playerGame" class="hidden">
                 <div class="info-box">
-                    <strong>Status:</strong> <span id="playerStatus">Menunggu soal...</span>
+                    <strong>Status:</strong> <span id="playerStatus">Lomba sedang berlangsung!</span>
                 </div>
-                <div id="playerQuestion"></div>
+                
+                <div class="score-board" style="grid-template-columns: 1fr;">
+                    <div class="player-score">
+                        <div class="player-name">Skor Anda</div>
+                        <div class="score" id="playerScore">0</div>
+                    </div>
+                </div>
+
+                <div id="playerQuestionDisplay">
+                    <div class="question-card">
+                        <div class="question-number">Soal <span id="playerQNumber">1</span>/30</div>
+                        <span class="difficulty-badge" id="playerDiffBadge">Mudah</span>
+                        <div class="question-text" id="playerQText">Menunggu soal...</div>
+                        <div class="options" id="playerQOptions"></div>
+                    </div>
+                </div>
+
+                <div class="info-box" style="background: #fff3cd; border-color: #ffc107;">
+                    <strong>Perhatian:</strong> Jawaban akan dikunci setelah wasit menilai. Tunggu instruksi wasit!
+                </div>
             </div>
 
-            <button class="btn back-btn" onclick="backToMenu()">← Kembali ke Menu</button>
+            <div id="playerResults" class="hidden">
+                <div class="results">
+                    <h2>🏆 Lomba Selesai!</h2>
+                    <div class="winner" id="playerWinnerText"></div>
+                    <div class="final-scores">
+                        <div class="player-score">
+                            <div class="player-name">Skor Anda</div>
+                            <div class="score" id="playerFinalScore">0</div>
+                        </div>
+                    </div>
+                    <button class="btn" onclick="backToMenu()">Kembali ke Menu Utama</button>
+                </div>
+            </div>
+
+            <button class="btn btn-secondary back-btn" onclick="backToMenu()">← Kembali ke Menu</button>
         </div>
 
-        <!-- Hasil Akhir -->
+        <!-- Hasil Akhir Wasit -->
         <div id="resultsPanel" class="section hidden">
             <div class="results">
                 <h2>🏆 Hasil Lomba</h2>
@@ -580,7 +671,7 @@
                 {q: "Siapakah yang menggulingkan meja penukar uang di Bait Allah?", options: ["Petrus", "Paulus", "Yesus", "Yohanes Pembaptis"], correct: 2, level: "medium"},
                 {q: "Apa nama gunung tempat Musa menerima Sepuluh Perintah Allah?", options: ["Gunung Sinai", "Gunung Nebo", "Gunung Karmel", "Gunung Tabor"], correct: 0, level: "medium"},
                 {q: "Siapakah yang menjadi raja Israel setelah Daud?", options: ["Salomo", "Absalom", "Adonia", "Rehoboam"], correct: 0, level: "medium"},
-                {q: "Berapa banyak spies yang dikirim Musa untuk mengintai tanah Kanaan?", options: ["10 orang", "12 orang", "40 orang", "70 orang"], correct: 1, level: "medium"},
+                {q: "Berapa banyak pengintai yang dikirim Musa untuk mengintai tanah Kanaan?", options: ["10 orang", "12 orang", "40 orang", "70 orang"], correct: 1, level: "medium"},
                 {q: "Siapakah yang menolong Daud ketika ia melawan Goliat?", options: ["Tidak ada yang menolong", "Yoab", "Abner", "Yonatan"], correct: 0, level: "medium"},
                 {q: "Apa nama sungai yang dibelah oleh Elia untuk menyeberang bersama Elisa?", options: ["Sungai Yordan", "Sungai Kebar", "Sungai Pisga", "Sungai Arnon"], correct: 0, level: "medium"},
                 {q: "Siapakah yang menggantikan Yudas Iskariot sebagai rasul?", options: ["Matias", "Barnabas", "Silas", "Timotius"], correct: 0, level: "medium"},
@@ -609,7 +700,7 @@
                 {q: "Siapakah yang melihat tongkat Harun berbunga?", options: ["Musa", "Korah", "Datan", "Abiram"], correct: 0, level: "easy"},
                 {q: "Di mana Yesus berkhotbah di atas bukit?", options: ["Bukit Zaitun", "Bukit Golgota", "Bukit Tabor", "Bukit Sinai"], correct: 0, level: "easy"},
                 {q: "Siapakah yang mengingkari Yesus tiga kali sebelum ayam berkokok?", options: ["Yudas", "Petrus", "Yohanes", "Yakobus"], correct: 1, level: "easy"},
-                {q: "Apa nama makanan yang turun dari langung di padang gurun?", options: ["Manna", "Salwa", "Roti", "Daging"], correct: 0, level: "easy"},
+                {q: "Apa nama makanan yang turun dari langit di padang gurun?", options: ["Manna", "Salwa", "Roti", "Daging"], correct: 0, level: "easy"},
                 
                 // Sedang (10 soal)
                 {q: "Siapakah yang menjadi hakim wanita di Israel?", options: ["Debora", "Yael", "Rut", "Ester"], correct: 0, level: "medium"},
@@ -637,12 +728,12 @@
             ],
             9: [
                 // Mudah (10 soal)
-                {q: "Siapakah yang dipilih untuk menggantikan Musa memimpin Israel masuk ke Kanaan?", options: ["Kaleb", "Yosua", "Hoshea", "Eleazar"], correct: 1, level: "easy"},
+                {q: "Siapakah yang dipilih Allah untuk menggantikan Musa memimpin Israel masuk ke Kanaan?", options: ["Kaleb", "Yosua", "Hoshea", "Eleazar"], correct: 1, level: "easy"},
                 {q: "Apa nama kota yang diberikan kepada Yosua sebagai warisan?", options: ["Hebron", "Timnat-Heres", "Yerusalem", "Betlehem"], correct: 1, level: "easy"},
                 {q: "Siapakah yang menjadi hakim setelah Yosua?", options: ["Otniel", "Ehud", "Debora", "Gideon"], correct: 0, level: "easy"},
                 {q: "Berapa jumlah suku Israel?", options: ["10 suku", "11 suku", "12 suku", "13 suku"], correct: 2, level: "easy"},
                 {q: "Siapakah yang membunuh Sisera dengan patok tenda?", options: ["Debora", "Yael", "Yahel", "Rut"], correct: 1, level: "easy"},
-                {q: "Apa nama benda yang dibawa Israel untuk menyeberangi Yordan?", options: ["Tabut Perjanjian", ["Mezbah Korban", "Tiang Awan", "Tongkat Harun"], correct: 0, level: "easy"},
+                {q: "Apa nama benda yang dibawa Israel untuk menyeberangi Yordan?", options: ["Tabut Perjanjian", "Mezbah Korban", "Tiang Awan", "Tongkat Harun"], correct: 0, level: "easy"},
                 {q: "Siapakah yang meminta tanah pegunungan sebagai warisan?", options: ["Kaleb", "Yosua", "Otniel", "Ehud"], correct: 0, level: "easy"},
                 {q: "Di mana Musa meninggal?", options: ["Gunung Sinai", "Gunung Nebo", "Gunung Karmel", "Gunung Tabor"], correct: 1, level: "easy"},
                 {q: "Siapakah yang menjadi raja Israel pertama?", options: ["Daud", "Saul", "Salomo", "Samuel"], correct: 1, level: "easy"},
@@ -685,6 +776,9 @@
         let playerNames = {1: "", 2: ""};
         let questionHistory = [];
         let timerInterval = null;
+        let connectedPlayers = [];
+        let currentPlayerId = null; // Untuk pemain yang login
+        let gameStarted = false;
 
         function selectRole(role) {
             currentRole = role;
@@ -711,6 +805,10 @@
             document.getElementById('otpCode').textContent = currentOTP;
             document.getElementById('otpSection').classList.remove('hidden');
             
+            // Reset connected players
+            connectedPlayers = [];
+            updateConnectedPlayersList();
+            
             // Start timer
             if (timerInterval) clearInterval(timerInterval);
             timerInterval = setInterval(updateOTPTimer, 1000);
@@ -725,6 +823,8 @@
                 document.getElementById('otpTimer').textContent = 'KADALUARSA - Generate OTP baru';
                 document.getElementById('otpCode').textContent = '----';
                 currentOTP = null;
+                connectedPlayers = [];
+                updateConnectedPlayersList();
                 return;
             }
             
@@ -734,19 +834,133 @@
                 `Berlaku: ${minutes}:${seconds.toString().padStart(2, '0')}`;
         }
 
+        function updateConnectedPlayersList() {
+            const container = document.getElementById('connectedPlayers');
+            
+            if (connectedPlayers.length === 0) {
+                container.innerHTML = '<p style="color: #666; font-style: italic;">Belum ada pemain yang terhubung...</p>';
+                document.getElementById('startGameBtn').disabled = true;
+                document.getElementById('startGameBtn').textContent = 'Mulai Lomba (Perlu 2 Pemain)';
+            } else {
+                container.innerHTML = connectedPlayers.map((p, idx) => 
+                    `<div class="player-item">
+                        <strong>Pemain ${idx + 1}:</strong> ${p.name} 
+                        ${p.id === currentPlayerId ? '(Anda)' : ''}
+                    </div>`
+                ).join('');
+                
+                if (connectedPlayers.length >= 2) {
+                    document.getElementById('startGameBtn').disabled = false;
+                    document.getElementById('startGameBtn').textContent = 'Mulai Lomba';
+                    
+                    // Auto-fill names if not manually entered
+                    if (!document.getElementById('player1Name').value) {
+                        document.getElementById('player1Name').value = connectedPlayers[0].name;
+                    }
+                    if (!document.getElementById('player2Name').value && connectedPlayers[1]) {
+                        document.getElementById('player2Name').value = connectedPlayers[1].name;
+                    }
+                } else {
+                    document.getElementById('startGameBtn').disabled = true;
+                    document.getElementById('startGameBtn').textContent = 'Mulai Lomba (Perlu 2 Pemain)';
+                }
+            }
+        }
+
+        function joinGame() {
+            const otp = document.getElementById('otpInput').value.trim();
+            const name = document.getElementById('playerNameInput').value.trim();
+            const msgDiv = document.getElementById('loginMessage');
+            
+            // Validasi
+            if (!otp) {
+                showMessage(msgDiv, 'Mohon masukkan kode OTP!', 'error');
+                return;
+            }
+            
+            if (!/^\d{4}$/.test(otp)) {
+                showMessage(msgDiv, 'OTP harus 4 digit angka!', 'error');
+                return;
+            }
+            
+            if (!name) {
+                showMessage(msgDiv, 'Mohon masukkan nama Anda!', 'error');
+                return;
+            }
+            
+            if (!currentOTP) {
+                showMessage(msgDiv, 'OTP tidak valid atau sudah kadaluarsa. Minta wasit untuk generate OTP baru.', 'error');
+                return;
+            }
+            
+            if (otp !== currentOTP) {
+                showMessage(msgDiv, 'Kode OTP salah! Periksa kembali dengan wasit.', 'error');
+                return;
+            }
+            
+            if (connectedPlayers.length >= 2) {
+                showMessage(msgDiv, 'Maaf, lomba sudah penuh (maksimal 2 pemain).', 'error');
+                return;
+            }
+            
+            // Cek nama duplikat
+            if (connectedPlayers.find(p => p.name.toLowerCase() === name.toLowerCase())) {
+                showMessage(msgDiv, 'Nama sudah digunakan pemain lain. Gunakan nama berbeda.', 'error');
+                return;
+            }
+            
+            // Tambahkan pemain
+            const playerId = Date.now();
+            connectedPlayers.push({
+                id: playerId,
+                name: name,
+                score: 0
+            });
+            
+            currentPlayerId = playerId;
+            
+            // Update UI wasit jika sedang terbuka
+            updateConnectedPlayersList();
+            
+            // Tampilkan halaman tunggu
+            document.getElementById('playerLogin').classList.add('hidden');
+            document.getElementById('playerWait').classList.remove('hidden');
+            document.getElementById('connectedName').textContent = name;
+            
+            // Cek apakah game sudah dimulai
+            checkGameStatus();
+        }
+
+        function showMessage(container, message, type) {
+            container.innerHTML = `<div class="alert alert-${type}">${message}</div>`;
+            setTimeout(() => {
+                container.innerHTML = '';
+            }, 5000);
+        }
+
+        function checkGameStatus() {
+            // Cek setiap 2 detik apakah wasit sudah mulai game
+            const checkInterval = setInterval(() => {
+                if (gameStarted) {
+                    clearInterval(checkInterval);
+                    startPlayerGame();
+                }
+            }, 2000);
+        }
+
         function startGame() {
             if (!currentOTP) {
                 alert('OTP telah kadaluarsa! Silakan generate OTP baru.');
                 return;
             }
             
-            const p1Name = document.getElementById('player1Name').value.trim();
-            const p2Name = document.getElementById('player2Name').value.trim();
-            
-            if (!p1Name || !p2Name) {
-                alert('Mohon isi nama kedua pemain!');
+            if (connectedPlayers.length < 2) {
+                alert('Belum ada 2 pemain yang terhubung!');
                 return;
             }
+            
+            const p1Name = document.getElementById('player1Name').value.trim() || connectedPlayers[0].name;
+            const p2Name = document.getElementById('player2Name').value.trim() || (connectedPlayers[1] ? connectedPlayers[1].name : 'Pemain 2');
             
             playerNames[1] = p1Name;
             playerNames[2] = p2Name;
@@ -756,12 +970,28 @@
             // Shuffle questions
             currentQuestions.sort(() => Math.random() - 0.5);
             
+            gameStarted = true;
+            
             document.getElementById('wasitSetup').classList.add('hidden');
             document.getElementById('wasitControl').classList.remove('hidden');
             document.getElementById('displayP1').textContent = p1Name;
             document.getElementById('displayP2').textContent = p2Name;
             
             showQuestion();
+        }
+
+        function startPlayerGame() {
+            document.getElementById('playerWait').classList.add('hidden');
+            document.getElementById('playerGame').classList.remove('hidden');
+            
+            // Tentukan posisi pemain ini (1 atau 2)
+            const playerIndex = connectedPlayers.findIndex(p => p.id === currentPlayerId);
+            if (playerIndex !== -1) {
+                // Update skor pemain ini
+                updatePlayerScore();
+            }
+            
+            showPlayerQuestion();
         }
 
         function showQuestion() {
@@ -793,9 +1023,33 @@
             });
         }
 
+        function showPlayerQuestion() {
+            if (currentQuestionIndex >= currentQuestions.length) return;
+            
+            const q = currentQuestions[currentQuestionIndex];
+            
+            document.getElementById('playerQNumber').textContent = currentQuestionIndex + 1;
+            document.getElementById('playerDiffBadge').textContent = 
+                q.level === 'easy' ? 'Mudah' : q.level === 'medium' ? 'Sedang' : 'Sulit';
+            document.getElementById('playerDiffBadge').className = 'difficulty-badge ' + q.level;
+            document.getElementById('playerQText').textContent = q.q;
+            
+            const optionsDiv = document.getElementById('playerQOptions');
+            optionsDiv.innerHTML = '';
+            
+            const labels = ['A', 'B', 'C', 'D'];
+            q.options.forEach((opt, idx) => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.innerHTML = `<strong>${labels[idx]}.</strong> ${opt}`;
+                btn.disabled = true; // Pemain tidak bisa klik, hanya wasit yang menilai
+                optionsDiv.appendChild(btn);
+            });
+        }
+
         function revealAnswer(selectedIndex) {
             const q = currentQuestions[currentQuestionIndex];
-            const buttons = document.querySelectorAll('.option-btn');
+            const buttons = document.querySelectorAll('#qOptions .option-btn');
             
             buttons.forEach((btn, idx) => {
                 btn.disabled = true;
@@ -805,35 +1059,79 @@
                     btn.classList.add('wrong');
                 }
             });
+            
+            // Update juga tampilan pemain
+            updatePlayerOptions(selectedIndex, q.correct);
+        }
+
+        function updatePlayerOptions(selectedIndex, correctIndex) {
+            const buttons = document.querySelectorAll('#playerQOptions .option-btn');
+            buttons.forEach((btn, idx) => {
+                if (idx === correctIndex) {
+                    btn.classList.add('correct');
+                } else if (idx === selectedIndex && idx !== correctIndex) {
+                    btn.classList.add('wrong');
+                }
+            });
         }
 
         function correctAnswer(player) {
-            scores[player]++;
+            scores[player] += 10;
             document.getElementById('score' + player).textContent = scores[player];
+            
+            // Update skor pemain jika ini adalah pemain yang login
+            const playerIndex = connectedPlayers.findIndex(p => p.id === currentPlayerId);
+            if (playerIndex !== -1 && playerIndex + 1 === player) {
+                updatePlayerScore();
+            }
+            
             questionHistory.push({
                 question: currentQuestionIndex + 1,
                 level: currentQuestions[currentQuestionIndex].level,
                 winner: playerNames[player],
-                correct: true
+                correct: true,
+                points: 10
             });
         }
 
         function wrongAnswer(player) {
+            scores[player] = Math.max(0, scores[player] - 5);
+            document.getElementById('score' + player).textContent = scores[player];
+            
+            const playerIndex = connectedPlayers.findIndex(p => p.id === currentPlayerId);
+            if (playerIndex !== -1 && playerIndex + 1 === player) {
+                updatePlayerScore();
+            }
+            
             questionHistory.push({
                 question: currentQuestionIndex + 1,
                 level: currentQuestions[currentQuestionIndex].level,
                 winner: playerNames[player],
-                correct: false
+                correct: false,
+                points: -5
             });
+        }
+
+        function updatePlayerScore() {
+            const playerIndex = connectedPlayers.findIndex(p => p.id === currentPlayerId);
+            if (playerIndex !== -1) {
+                document.getElementById('playerScore').textContent = scores[playerIndex + 1];
+            }
         }
 
         function nextQuestion() {
             currentQuestionIndex++;
             showQuestion();
+            
+            // Update tampilan pemain juga
+            if (document.getElementById('playerGame').classList.contains('hidden') === false) {
+                showPlayerQuestion();
+            }
         }
 
         function endGame() {
-            document.getElementById('wasitPanel').classList.add('hidden');
+            // Tampilkan hasil untuk wasit
+            document.getElementById('wasitControl').classList.add('hidden');
             document.getElementById('resultsPanel').classList.remove('hidden');
             
             const p1Score = scores[1];
@@ -867,30 +1165,39 @@
                 levelCell.appendChild(badge);
                 
                 const resultCell = row.insertCell(2);
-                resultCell.textContent = h.correct ? '✓ Benar' : '✗ Salah';
+                resultCell.textContent = (h.correct ? '✓ Benar' : '✗ Salah') + ` (${h.points > 0 ? '+' : ''}${h.points})`;
                 resultCell.style.color = h.correct ? 'green' : 'red';
                 
                 row.insertCell(3).textContent = h.winner;
             });
+            
+            // Tampilkan hasil untuk pemain juga
+            showPlayerResults();
         }
 
-        function joinGame() {
-            const otp = document.getElementById('otpInput').value;
-            const name = document.getElementById('playerNameInput').value.trim();
+        function showPlayerResults() {
+            const playerIndex = connectedPlayers.findIndex(p => p.id === currentPlayerId);
+            if (playerIndex === -1) return;
             
-            if (otp !== currentOTP) {
-                alert('Kode OTP tidak valid atau sudah kadaluarsa!');
-                return;
+            document.getElementById('playerGame').classList.add('hidden');
+            document.getElementById('playerResults').classList.remove('hidden');
+            
+            const myScore = scores[playerIndex + 1];
+            const opponentScore = scores[playerIndex === 0 ? 2 : 1];
+            
+            document.getElementById('playerFinalScore').textContent = myScore;
+            
+            const winnerText = document.getElementById('playerWinnerText');
+            if (myScore > opponentScore) {
+                winnerText.textContent = '🎉 Selamat! Anda Menang!';
+                winnerText.style.color = '#28a745';
+            } else if (myScore < opponentScore) {
+                winnerText.textContent = '😔 Anda Kalah. Tetap semangat!';
+                winnerText.style.color = '#dc3545';
+            } else {
+                winnerText.textContent = '🤝 Seri! Pertandingan seimbang.';
+                winnerText.style.color = '#ffc107';
             }
-            
-            if (!name) {
-                alert('Mohon masukkan nama Anda!');
-                return;
-            }
-            
-            document.getElementById('playerLogin').classList.add('hidden');
-            document.getElementById('playerWait').classList.remove('hidden');
-            document.getElementById('connectedName').textContent = name;
         }
 
         function backToMenu() {
@@ -902,6 +1209,9 @@
             scores = {1: 0, 2: 0};
             playerNames = {1: "", 2: ""};
             questionHistory = [];
+            connectedPlayers = [];
+            currentPlayerId = null;
+            gameStarted = false;
             
             // Hide all sections
             document.querySelectorAll('.section').forEach(s => s.classList.add('hidden'));
@@ -912,12 +1222,18 @@
             document.getElementById('otpSection').classList.add('hidden');
             document.getElementById('wasitSetup').classList.remove('hidden');
             document.getElementById('wasitControl').classList.add('hidden');
+            document.getElementById('resultsPanel').classList.add('hidden');
+            
             document.getElementById('playerLogin').classList.remove('hidden');
             document.getElementById('playerWait').classList.add('hidden');
-            document.getElementById('otpInput').value = '';
+            document.getElementById('playerGame').classList.add('hidden');
+            document.getElementById('playerResults').classList.add('hidden');
+            
+          document.getElementById('otpInput').value = '';
             document.getElementById('playerNameInput').value = '';
             document.getElementById('player1Name').value = '';
             document.getElementById('player2Name').value = '';
+            document.getElementById('loginMessage').innerHTML = '';
         }
     </script>
 </body>
