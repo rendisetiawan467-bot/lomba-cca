@@ -432,15 +432,59 @@
             border-left: 4px solid #667eea;
         }
 
-        .debug-info {
+        .debug-panel {
             background: #f8f9fa;
-            border: 1px solid #dee2e6;
-            padding: 10px;
-            margin-top: 10px;
-            border-radius: 5px;
+            border: 2px solid #dee2e6;
+            padding: 15px;
+            margin-top: 20px;
+            border-radius: 10px;
             font-family: monospace;
-            font-size: 0.8em;
-            color: #666;
+            font-size: 0.85em;
+        }
+
+        .debug-title {
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #495057;
+        }
+
+        .debug-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 5px 0;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .debug-label {
+            color: #6c757d;
+        }
+
+        .debug-value {
+            font-weight: bold;
+            color: #212529;
+        }
+
+        .sync-indicator {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 5px;
+        }
+
+        .sync-active {
+            background: #28a745;
+            animation: pulse 1s infinite;
+        }
+
+        .sync-inactive {
+            background: #dc3545;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
         }
 
         .connection-status {
@@ -452,22 +496,25 @@
             font-size: 0.75em;
             font-weight: bold;
             z-index: 1000;
-            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 5px;
         }
 
-        .status-online {
-            background: #d4edda;
-            color: #155724;
+        .room-info {
+            background: #e9ecef;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            text-align: center;
         }
 
-        .status-offline {
-            background: #f8d7da;
-            color: #721c24;
-        }
-
-        .status-waiting {
-            background: #fff3cd;
-            color: #856404;
+        .room-code {
+            font-size: 2em;
+            font-weight: bold;
+            color: #667eea;
+            font-family: monospace;
+            letter-spacing: 5px;
         }
 
         @media (max-width: 600px) {
@@ -490,7 +537,10 @@
     </style>
 </head>
 <body>
-    <div id="connectionStatus" class="connection-status status-offline">Offline</div>
+    <div id="connectionStatus" class="connection-status" style="background: #6c757d; color: white;">
+        <span class="sync-indicator sync-inactive"></span>
+        <span id="statusText">Initializing...</span>
+    </div>
 
     <div class="container">
         <h1>📖 Lomba Cerdas Cermat Alkitab</h1>
@@ -525,35 +575,54 @@
 
                 <div id="otpSection" class="hidden">
                     <div class="info-box">
-                        <strong>Instruksi:</strong> Berikan kode OTP di bawah ini kepada 2 pemain. 
-                        Kode akan kadaluarsa dalam 5 menit. Pastikan semua device membuka halaman ini di browser yang sama (Chrome/Edge/Safari).
+                        <strong>Instruksi:</strong> Beritahu 2 pemain untuk membuka halaman ini di device mereka, pilih "Pemain", dan masukkan kode OTP berikut:
                     </div>
                     
-                    <div class="otp-display">
-                        <div class="otp-code" id="otpCode">----</div>
-                        <div class="timer" id="otpTimer">Berlaku: 5:00</div>
+                    <div class="room-info">
+                        <div style="margin-bottom: 10px; color: #6c757d;">KODE OTP</div>
+                        <div class="room-code" id="otpCode">----</div>
+                        <div class="timer" id="otpTimer" style="margin-top: 10px;">Berlaku: 5:00</div>
                     </div>
 
                     <div class="player-list">
-                        <h3>Pemain yang Terhubung: <span id="playerCount">0/2</span></h3>
+                        <h3>👥 Pemain Terhubung: <span id="playerCount">0/2</span></h3>
                         <div id="connectedPlayers">
-                            <p style="color: #666; font-style: italic;">Belum ada pemain yang terhubung...</p>
+                            <p style="color: #666; font-style: italic;">Menunggu pemain...</p>
                         </div>
-                        <div class="debug-info" id="wasitDebug">Menunggu koneksi...</div>
                     </div>
 
-                    <div class="form-group">
-                        <label>Nama Pemain 1:</label>
-                        <input type="text" id="player1Name" placeholder="Otomatis dari pemain">
-                    </div>
-                    <div class="form-group">
-                        <label>Nama Pemain 2:</label>
-                        <input type="text" id="player2Name" placeholder="Otomatis dari pemain">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 20px 0;">
+                        <div class="form-group" style="margin: 0;">
+                            <label style="font-size: 0.9em;">Pemain 1:</label>
+                            <input type="text" id="player1Name" placeholder="Belum terhubung" readonly style="background: #e9ecef;">
+                        </div>
+                        <div class="form-group" style="margin: 0;">
+                            <label style="font-size: 0.9em;">Pemain 2:</label>
+                            <input type="text" id="player2Name" placeholder="Belum terhubung" readonly style="background: #e9ecef;">
+                        </div>
                     </div>
 
-                    <button class="btn btn-success" onclick="startGame()" id="startGameBtn" disabled>Mulai Lomba (Perlu 2 Pemain)</button>
-                    <button class="btn btn-secondary" onclick="generateOTP()">Generate OTP Baru</button>
-                    <button class="btn btn-info" onclick="forceSync()">Force Sync</button>
+                    <button class="btn btn-success" onclick="startGame()" id="startGameBtn" disabled>
+                        🔒 Mulai Lomba (Perlu 2 Pemain)
+                    </button>
+                    <button class="btn btn-secondary" onclick="generateOTP()">🔄 OTP Baru</button>
+                    <button class="btn btn-info" onclick="broadcastPing()">📢 Ping Pemain</button>
+                </div>
+
+                <div class="debug-panel">
+                    <div class="debug-title">🔧 Debug Info (Wasit)</div>
+                    <div class="debug-row">
+                        <span class="debug-label">Session ID:</span>
+                        <span class="debug-value" id="debugSessionId">-</span>
+                    </div>
+                    <div class="debug-row">
+                        <span class="debug-label">Last Update:</span>
+                        <span class="debug-value" id="debugLastUpdate">-</span>
+                    </div>
+                    <div class="debug-row">
+                        <span class="debug-label">Storage Status:</span>
+                        <span class="debug-value" id="debugStorage">Checking...</span>
+                    </div>
                 </div>
             </div>
 
@@ -583,12 +652,12 @@
                 </div>
 
                 <div class="controls">
-                    <button class="btn btn-success" onclick="correctAnswer(1)">✓ Pemain 1 Benar (+10)</button>
-                    <button class="btn btn-success" onclick="correctAnswer(2)">✓ Pemain 2 Benar (+10)</button>
+                    <button class="btn btn-success" onclick="correctAnswer(1)">✓ P1 Benar (+10)</button>
+                    <button class="btn btn-success" onclick="correctAnswer(2)">✓ P2 Benar (+10)</button>
                 </div>
                 <div class="controls">
-                    <button class="btn btn-danger" onclick="wrongAnswer(1)">✗ Pemain 1 Salah (-5)</button>
-                    <button class="btn btn-danger" onclick="wrongAnswer(2)">✗ Pemain 2 Salah (-5)</button>
+                    <button class="btn btn-danger" onclick="wrongAnswer(1)">✗ P1 Salah (-5)</button>
+                    <button class="btn btn-danger" onclick="wrongAnswer(2)">✗ P2 Salah (-5)</button>
                 </div>
                 <div class="controls">
                     <button class="btn btn-warning" onclick="nextQuestion()">Soal Berikutnya →</button>
@@ -605,46 +674,57 @@
             
             <div id="playerLogin">
                 <div class="info-box">
-                    <strong>Petunjuk:</strong> Masukkan kode OTP yang diberikan wasit dan nama lengkap Anda.
+                    <strong>Petunjuk:</strong> Masukkan kode 4 digit dari wasit untuk bergabung ke room.
                 </div>
                 
                 <div class="form-group">
-                    <label>Kode OTP (4 digit):</label>
-                    <input type="text" id="otpInput" placeholder="Contoh: 1234" maxlength="4" pattern="\d*">
+                    <label>Kode OTP:</label>
+                    <input type="text" id="otpInput" placeholder="Contoh: 1234" maxlength="4" style="font-size: 1.5em; text-align: center; letter-spacing: 10px;">
                 </div>
                 <div class="form-group">
                     <label>Nama Lengkap:</label>
-                    <input type="text" id="playerNameInput" placeholder="Masukkan nama lengkap Anda">
+                    <input type="text" id="playerNameInput" placeholder="Nama Anda">
                 </div>
-                <button class="btn" onclick="joinGame()">Gabung ke Lomba</button>
+                <button class="btn btn-success" onclick="joinGame()">🚀 Gabung ke Lomba</button>
                 <div id="loginMessage"></div>
-                
-                <div class="debug-info" id="playerDebug">
-                    Status: Menunggu input...<br>
-                    LocalStorage: Tersedia<br>
-                    Mode: Polling Active
+
+                <div class="debug-panel">
+                    <div class="debug-title">🔧 Debug Info (Player)</div>
+                    <div class="debug-row">
+                        <span class="debug-label">My ID:</span>
+                        <span class="debug-value" id="debugMyId">-</span>
+                    </div>
+                    <div class="debug-row">
+                        <span class="debug-label">Room Status:</span>
+                        <span class="debug-value" id="debugRoomStatus">Not connected</span>
+                    </div>
+                    <div class="debug-row">
+                        <span class="debug-label">Sync Count:</span>
+                        <span class="debug-value" id="debugSyncCount">0</span>
+                    </div>
                 </div>
             </div>
 
             <div id="playerWait" class="waiting-room hidden">
                 <div class="spinner"></div>
-                <h3>Menunggu wasit memulai lomba...</h3>
-                <p>Anda telah terhubung sebagai <strong id="connectedName"></strong></p>
-                <div class="info-box" style="margin-top: 20px;">
-                    <div>Room ID: <strong id="playerRoomId" style="font-family: monospace; font-size: 1.2em;">-</strong></div>
-                    <div>Player ID: <span id="playerIdDisplay" style="font-family: monospace;">-</span></div>
+                <h3>⏳ Menunggu Wasit...</h3>
+                <p>Anda: <strong id="connectedName" style="color: #667eea;"></strong></p>
+                
+                <div class="room-info" style="margin: 20px 0;">
+                    <div style="font-size: 0.9em; color: #6c757d; margin-bottom: 5px;">TERHUBUNG KE ROOM</div>
+                    <div class="room-code" id="playerRoomDisplay" style="font-size: 1.5em;">----</div>
                 </div>
-                <p style="margin-top: 20px; color: #666;">Tunggu wasit memulai pertandingan. Jangan tutup halaman ini!</p>
-                
-                <div class="debug-info" id="waitDebug">Sync active...</div>
-                
-                <button class="btn btn-secondary" onclick="checkConnection()" style="margin-top: 20px;">Cek Status Koneksi</button>
-                <button class="btn btn-info" onclick="forceReconnect()">Force Reconnect</button>
+
+                <div class="info-box" style="background: #d4edda; border-color: #28a745;">
+                    ✅ Berhasil terhubung! Tunggu wasit memulai lomba...
+                </div>
+
+                <button class="btn btn-secondary" onclick="checkRoomStatus()" style="margin-top: 20px;">🔄 Cek Status</button>
             </div>
 
             <div id="playerGame" class="hidden">
                 <div class="info-box">
-                    <strong>Status:</strong> <span id="playerStatus">Lomba sedang berlangsung!</span>
+                    <strong>🎮 Status:</strong> <span id="playerStatus">Lomba dimulai!</span>
                 </div>
                 
                 <div class="score-board" style="grid-template-columns: 1fr;">
@@ -658,13 +738,13 @@
                     <div class="question-card">
                         <div class="question-number">Soal <span id="playerQNumber">1</span>/30</div>
                         <span class="difficulty-badge" id="playerDiffBadge">Mudah</span>
-                        <div class="question-text" id="playerQText">Menunggu soal...</div>
+                        <div class="question-text" id="playerQText">Memuat soal...</div>
                         <div class="options" id="playerQOptions"></div>
                     </div>
                 </div>
 
-                <div class="info-box" style="background: #fff3cd; border-color: #ffc107;">
-                    <strong>Perhatian:</strong> Jawaban akan dikunci setelah wasit menilai. Tunggu instruksi wasit!
+                <div class="alert alert-warning">
+                    ⚠️ Tunggu wasit membacakan soal dan menilai jawaban!
                 </div>
             </div>
 
@@ -674,11 +754,11 @@
                     <div class="winner" id="playerWinnerText"></div>
                     <div class="final-scores">
                         <div class="player-score">
-                            <div class="player-name">Skor Anda</div>
+                            <div class="player-name">Skor Akhir</div>
                             <div class="score" id="playerFinalScore">0</div>
                         </div>
                     </div>
-                    <button class="btn" onclick="backToMenu()">Kembali ke Menu Utama</button>
+                    <button class="btn" onclick="backToMenu()">Kembali ke Menu</button>
                 </div>
             </div>
 
@@ -706,7 +786,7 @@
                             <th>No</th>
                             <th>Tingkat</th>
                             <th>Hasil</th>
-                            <th>Pemenang</th>
+                            <th>Poin</th>
                         </tr>
                     </thead>
                     <tbody id="detailBody"></tbody>
@@ -717,10 +797,11 @@
     </div>
 
     <script>
-        // Database Soal Alkitab
+        // ==========================================
+        // DATABASE SOAL
+        // ==========================================
         const questionDB = {
             7: [
-                // Mudah (10 soal)
                 {q: "Siapakah yang membangun bahtera besar untuk menyelamatkan hewan-hewan dari air bah?", options: ["Nuh", "Musa", "Daud", "Abraham"], correct: 0, level: "easy"},
                 {q: "Berapa hari Allah menciptakan dunia?", options: ["5 hari", "6 hari", "7 hari", "8 hari"], correct: 1, level: "easy"},
                 {q: "Siapakah yang dipelihara di dalam perut ikan besar selama tiga hari tiga malam?", options: ["Yunus", "Yesus", "Petrus", "Paulus"], correct: 0, level: "easy"},
@@ -731,8 +812,6 @@
                 {q: "Apa nama kota tempat Yesus dilahirkan?", options: ["Nazaret", "Betlehem", "Yerusalem", "Yerikho"], correct: 1, level: "easy"},
                 {q: "Siapakah yang menggantungkan diri setelah mengkhianati Yesus?", options: ["Petrus", "Yudas Iskariot", "Pilatus", "Herodes"], correct: 1, level: "easy"},
                 {q: "Apa mukjizat pertama yang dilakukan Yesus?", options: ["Memberi makan 5000 orang", "Menjadi anggur di pesta pernikahan Kana", "Menyembuhkan orang buta", "Berjalan di atas air"], correct: 1, level: "easy"},
-                
-                // Sedang (10 soal)
                 {q: "Siapakah yang membawa roti dan anggur kepada Daud ketika ia melarikan diri dari Absalom?", options: ["Husai", "Siba", "Ahitofel", "Yoab"], correct: 1, level: "medium"},
                 {q: "Berapa tahun bangsa Israel mengembara di padang gurun?", options: ["20 tahun", "30 tahun", "40 tahun", "50 tahun"], correct: 2, level: "medium"},
                 {q: "Siapakah yang menggulingkan meja penukar uang di Bait Allah?", options: ["Petrus", "Paulus", "Yesus", "Yohanes Pembaptis"], correct: 2, level: "medium"},
@@ -743,8 +822,6 @@
                 {q: "Apa nama sungai yang dibelah oleh Elia untuk menyeberang bersama Elisa?", options: ["Sungai Yordan", "Sungai Kebar", "Sungai Pisga", "Sungai Arnon"], correct: 0, level: "medium"},
                 {q: "Siapakah yang menggantikan Yudas Iskariot sebagai rasul?", options: ["Matias", "Barnabas", "Silas", "Timotius"], correct: 0, level: "medium"},
                 {q: "Di kota manakah Paulus dan Silas dipenjara dan menyanyikan pujian?", options: ["Filipi", "Tesalonika", "Korintus", "Efesus"], correct: 0, level: "medium"},
-                
-                // Sulit (10 soal)
                 {q: "Siapakah yang membangun kota Babel dan menara Babel?", options: ["Nimrod", "Nebukadnezar", "Koresh", "Darius"], correct: 0, level: "hard"},
                 {q: "Berapa umur Matusalem ketika ia meninggal?", options: ["777 tahun", "888 tahun", "969 tahun", "1000 tahun"], correct: 2, level: "hard"},
                 {q: "Siapakah yang menggulingkan meja-meja di Bait Allah dan mengusir mereka yang berjualan?", options: ["Yesus", "Yosia", "Hizkia", "Nehemia"], correct: 0, level: "hard"},
@@ -757,7 +834,6 @@
                 {q: "Berapa jumlah kitab dalam Perjanjian Baru?", options: ["21 kitab", "25 kitab", "27 kitab", "29 kitab"], correct: 2, level: "hard"}
             ],
             8: [
-                // Mudah (10 soal)
                 {q: "Siapakah yang dipilih Allah untuk memimpin bangsa Israel keluar dari Mesir?", options: ["Harun", "Musa", "Yosua", "Kaleb"], correct: 1, level: "easy"},
                 {q: "Apa nama laut yang dibelah Musa?", options: ["Laut Mati", "Laut Merah", "Laut Tengah", "Laut Galilea"], correct: 1, level: "easy"},
                 {q: "Siapakah yang mengalahkan Goliat?", options: ["Saul", "Daud", "Yonatan", "Yoab"], correct: 1, level: "easy"},
@@ -768,8 +844,6 @@
                 {q: "Di mana Yesus berkhotbah di atas bukit?", options: ["Bukit Zaitun", "Bukit Golgota", "Bukit Tabor", "Bukit Sinai"], correct: 0, level: "easy"},
                 {q: "Siapakah yang mengingkari Yesus tiga kali sebelum ayam berkokok?", options: ["Yudas", "Petrus", "Yohanes", "Yakobus"], correct: 1, level: "easy"},
                 {q: "Apa nama makanan yang turun dari langit di padang gurun?", options: ["Manna", "Salwa", "Roti", "Daging"], correct: 0, level: "easy"},
-                
-                // Sedang (10 soal)
                 {q: "Siapakah yang menjadi hakim wanita di Israel?", options: ["Debora", "Yael", "Rut", "Ester"], correct: 0, level: "medium"},
                 {q: "Berapa tahun Daud memerintah di Yerusalem?", options: ["20 tahun", "33 tahun", "40 tahun", "50 tahun"], correct: 1, level: "medium"},
                 {q: "Siapakah yang menulis sebagian besar kitab Mazmur?", options: ["Salomo", "Daud", "Asaf", "Heman"], correct: 1, level: "medium"},
@@ -780,8 +854,6 @@
                 {q: "Apa nama sungai di mana Filipus membaptis sida-sida dari Etiopia?", options: ["Sungai Yordan", "Sungai Gaza", "Sungai Nil", "Sungai Efrat"], correct: 1, level: "medium"},
                 {q: "Siapakah yang menggulingkan meja-meja di Bait Allah?", options: ["Yesus", "Yosia", "Hizkia", "Nehemia"], correct: 0, level: "medium"},
                 {q: "Di kota manakah Paulus ditinggalkan oleh Barnabas karena perselisihan?", options: ["Antiokhia", "Yerusalem", "Tarsus", "Damaskus"], correct: 0, level: "medium"},
-                
-                // Sulit (10 soal)
                 {q: "Siapakah yang menggulingkan meja penukar uang di Bait Allah?", options: ["Yesus", "Yohanes Pembaptis", "Petrus", "Paulus"], correct: 0, level: "hard"},
                 {q: "Berapa jumlah generasi dari Abraham sampai Daud?", options: ["12 generasi", "14 generasi", "16 generasi", "20 generasi"], correct: 1, level: "hard"},
                 {q: "Siapakah yang menggulingkan meja-meja di Bait Allah?", options: ["Yesus", "Yosia", "Hizkia", "Nehemia"], correct: 0, level: "hard"},
@@ -794,7 +866,6 @@
                 {q: "Siapakah yang menggulingkan meja penukar uang di Bait Allah?", options: ["Yesus", "Yohanes Pembaptis", "Petrus", "Paulus"], correct: 0, level: "hard"}
             ],
             9: [
-                // Mudah (10 soal)
                 {q: "Siapakah yang dipilih Allah untuk menggantikan Musa memimpin Israel masuk ke Kanaan?", options: ["Kaleb", "Yosua", "Hoshea", "Eleazar"], correct: 1, level: "easy"},
                 {q: "Apa nama kota yang diberikan kepada Yosua sebagai warisan?", options: ["Hebron", "Timnat-Heres", "Yerusalem", "Betlehem"], correct: 1, level: "easy"},
                 {q: "Siapakah yang menjadi hakim setelah Yosua?", options: ["Otniel", "Ehud", "Debora", "Gideon"], correct: 0, level: "easy"},
@@ -805,8 +876,6 @@
                 {q: "Di mana Musa meninggal?", options: ["Gunung Sinai", "Gunung Nebo", "Gunung Karmel", "Gunung Tabor"], correct: 1, level: "easy"},
                 {q: "Siapakah yang menjadi raja Israel pertama?", options: ["Daud", "Saul", "Salomo", "Samuel"], correct: 1, level: "easy"},
                 {q: "Apa nama nabi yang menegur Daud karena berzinah dengan Batsyeba?", options: ["Gad", "Natan", "Semaya", "Iddo"], correct: 1, level: "easy"},
-                
-                // Sedang (10 soal)
                 {q: "Siapakah yang membangun bait suci pertama di Yerusalem?", options: ["Daud", "Salomo", "Hizkia", "Yosia"], correct: 1, level: "medium"},
                 {q: "Berapa tahun Salomo memerintah?", options: ["20 tahun", "30 tahun", "40 tahun", "50 tahun"], correct: 2, level: "medium"},
                 {q: "Siapakah yang membelah kerajaan Israel menjadi dua?", options: ["Rehoboam", "Yerobeam", "Ahia", "Shemaiah"], correct: 0, level: "medium"},
@@ -817,8 +886,6 @@
                 {q: "Apa nama nabi yang melihat penglihatan tentang tulang-tulang kering?", options: ["Yesaya", "Yeremia", "Yehezkiel", "Daniel"], correct: 2, level: "medium"},
                 {q: "Siapakah yang menjadi ratu Persia dan menyelamatkan bangsa Yahudi?", options: ["Ester", "Washti", "Hegai", "Mordekhai"], correct: 0, level: "medium"},
                 {q: "Di mana Nehemia membangun kembali tembok kota?", options: ["Yerusalem", "Yerikho", "Betlehem", "Nazaret"], correct: 0, level: "medium"},
-                
-                // Sulit (10 soal)
                 {q: "Siapakah yang menggulingkan meja penukar uang di Bait Allah?", options: ["Yesus", "Yohanes Pembaptis", "Petrus", "Paulus"], correct: 0, level: "hard"},
                 {q: "Berapa jumlah tahun Daud melarikan diri dari Saul?", options: ["Sekitar 5 tahun", "Sekitar 10 tahun", "Sekitar 15 tahun", "Sekitar 20 tahun"], correct: 1, level: "hard"},
                 {q: "Siapakah yang menggulingkan meja-meja di Bait Allah?", options: ["Yesus", "Yosia", "Hizkia", "Nehemia"], correct: 0, level: "hard"},
@@ -832,430 +899,478 @@
             ]
         };
 
-        // State Management
+        // ==========================================
+        // STATE MANAGEMENT
+        // ==========================================
+        const STATE_KEY = 'alkitab_quiz_state_v3';
+        const SESSION_ID = 'session_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+        
         let currentRole = null;
-        let currentOTP = null;
-        let otpExpiry = null;
-        let currentKelas = null;
-        let currentQuestions = [];
-        let currentQuestionIndex = 0;
-        let scores = {1: 0, 2: 0};
-        let playerNames = {1: "", 2: ""};
-        let questionHistory = [];
-        let timerInterval = null;
+        let myPlayerId = null;
         let syncInterval = null;
-        let currentPlayerId = null;
-        let gameStarted = false;
-        let connectedPlayers = [];
-        let myPlayerData = null;
+        let isActive = true;
+        let lastKnownState = null;
 
-        const STORAGE_KEY = 'alkitab_quiz_v2';
-
-        // Debug function
-        function updateDebugInfo() {
-            const debugData = {
-                otp: currentOTP,
-                expiry: otpExpiry ? new Date(otpExpiry).toLocaleTimeString() : null,
-                players: connectedPlayers.length,
-                gameStarted: gameStarted,
-                role: currentRole,
-                playerId: currentPlayerId,
-                timestamp: new Date().toLocaleTimeString()
-            };
+        // ==========================================
+        // CORE FUNCTIONS
+        // ==========================================
+        
+        function init() {
+            updateStatus('Ready', 'inactive');
+            console.log('🎮 Alkitab Quiz initialized. Session:', SESSION_ID);
             
-            if (currentRole === 'wasit') {
-                document.getElementById('wasitDebug').innerHTML = 
-                    `<strong>Debug:</strong><br>` +
-                    `OTP: ${debugData.otp || '-'}<br>` +
-                    `Expiry: ${debugData.expiry || '-'}<br>` +
-                    `Players: ${debugData.players}/2<br>` +
-                    `Game: ${debugData.gameStarted ? 'Started' : 'Waiting'}<br>` +
-                    `Time: ${debugData.timestamp}`;
-            } else if (currentRole === 'player') {
-                const debugEl = document.getElementById('playerDebug') || document.getElementById('waitDebug');
-                if (debugEl) {
-                    debugEl.innerHTML = 
-                        `<strong>Debug:</strong><br>` +
-                        `My ID: ${currentPlayerId || '-'}<br>` +
-                        `OTP: ${currentOTP || '-'}<br>` +
-                        `Players: ${connectedPlayers.length}/2<br>` +
-                        `Game: ${debugData.gameStarted ? 'Started' : 'Waiting'}<br>` +
-                        `Time: ${debugData.timestamp}`;
-                }
+            // Cleanup old states
+            cleanupOldStates();
+        }
+
+        function cleanupOldStates() {
+            const saved = localStorage.getItem(STATE_KEY);
+            if (saved) {
+                try {
+                    const state = JSON.parse(saved);
+                    if (Date.now() - state.timestamp > 30 * 60 * 1000) { // 30 menit
+                        localStorage.removeItem(STATE_KEY);
+                        console.log('🧹 Cleaned up old state');
+                    }
+                } catch(e) {}
             }
         }
 
-        // Storage Functions
-        function saveState() {
-            const state = {
-                otp: currentOTP,
-                expiry: otpExpiry,
-                kelas: currentKelas,
-                players: connectedPlayers,
-                gameStarted: gameStarted,
-                questions: currentQuestions,
-                scores: scores,
-                playerNames: playerNames,
-                currentQuestionIndex: currentQuestionIndex,
-                questionHistory: questionHistory,
-                lastUpdate: Date.now()
-            };
-            
+        function getState() {
             try {
-                localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-                updateDebugInfo();
+                const saved = localStorage.getItem(STATE_KEY);
+                if (!saved) return null;
+                return JSON.parse(saved);
+            } catch (e) {
+                console.error('Error reading state:', e);
+                return null;
+            }
+        }
+
+        function setState(state) {
+            try {
+                state.timestamp = Date.now();
+                state.sessionId = SESSION_ID;
+                localStorage.setItem(STATE_KEY, JSON.stringify(state));
+                lastKnownState = JSON.parse(JSON.stringify(state));
                 return true;
             } catch (e) {
-                console.error('Save failed:', e);
+                console.error('Error saving state:', e);
                 return false;
             }
         }
 
-        function loadState() {
-            try {
-                const saved = localStorage.getItem(STORAGE_KEY);
-                if (!saved) return false;
-                
-                const state = JSON.parse(saved);
-                
-                // Cek validitas (max 10 menit)
-                if (Date.now() - state.lastUpdate > 10 * 60 * 1000) {
-                    localStorage.removeItem(STORAGE_KEY);
-                    return false;
-                }
-                
-                currentOTP = state.otp;
-                otpExpiry = state.expiry;
-                currentKelas = state.kelas;
-                connectedPlayers = state.players || [];
-                gameStarted = state.gameStarted || false;
-                currentQuestions = state.questions || [];
-                scores = state.scores || {1: 0, 2: 0};
-                playerNames = state.playerNames || {1: "", 2: ""};
-                currentQuestionIndex = state.currentQuestionIndex || 0;
-                questionHistory = state.questionHistory || [];
-                
-                updateDebugInfo();
-                return true;
-            } catch (e) {
-                console.error('Load failed:', e);
-                return false;
+        function updateStatus(text, type) {
+            const statusEl = document.getElementById('connectionStatus');
+            const statusText = document.getElementById('statusText');
+            const indicator = statusEl.querySelector('.sync-indicator');
+            
+            statusText.textContent = text;
+            
+            if (type === 'active') {
+                statusEl.style.background = '#28a745';
+                statusEl.style.color = 'white';
+                indicator.className = 'sync-indicator sync-active';
+            } else if (type === 'error') {
+                statusEl.style.background = '#dc3545';
+                statusEl.style.color = 'white';
+                indicator.className = 'sync-indicator sync-inactive';
+            } else {
+                statusEl.style.background = '#6c757d';
+                statusEl.style.color = 'white';
+                indicator.className = 'sync-indicator sync-inactive';
             }
         }
 
         function selectRole(role) {
             currentRole = role;
             document.getElementById('mainMenu').classList.add('hidden');
-            document.getElementById('connectionStatus').className = 'connection-status status-waiting';
-            document.getElementById('connectionStatus').textContent = 'Connecting...';
             
             if (role === 'wasit') {
                 document.getElementById('wasitPanel').classList.remove('hidden');
-                loadState();
-                if (currentOTP) {
-                    restoreWasitState();
-                }
-                startWasitSync();
-            } else {
-                document.getElementById('playerPanel').classList.remove('hidden');
-                startPlayerSync();
-            }
-            
-            updateDebugInfo();
-        }
-
-        function startWasitSync() {
-            // Wasit perlu cek apakah ada pemain baru
-            syncInterval = setInterval(() => {
-                loadState();
-                updateConnectedPlayersList();
+                document.getElementById('debugSessionId').textContent = SESSION_ID.substr(-8);
+                checkStorageStatus();
                 
-                if (gameStarted && document.getElementById('wasitControl').classList.contains('hidden')) {
-                    restoreGameState();
-                }
-            }, 1000);
-        }
-
-        function startPlayerSync() {
-            // Player perlu cek state terus-menerus
-            syncInterval = setInterval(() => {
-                const hadState = loadState();
-                
-                if (!hadState) {
-                    document.getElementById('connectionStatus').className = 'connection-status status-offline';
-                    document.getElementById('connectionStatus').textContent = 'No Room';
-                    return;
-                }
-                
-                document.getElementById('connectionStatus').className = 'connection-status status-online';
-                document.getElementById('connectionStatus').textContent = 'Connected';
-                
-                // Update OTP display di login jika kosong
-                const otpInput = document.getElementById('otpInput');
-                if (otpInput && !otpInput.value && currentOTP) {
-                    // Auto-fill jika pemain belum input
-                }
-                
-                // Jika sudah join dan game sudah mulai
-                if (myPlayerData && gameStarted) {
-                    if (document.getElementById('playerWait').classList.contains('hidden') === false) {
-                        startPlayerGame();
-                    } else if (document.getElementById('playerGame').classList.contains('hidden') === false) {
-                        // Update soal dan skor
-                        updatePlayerGameView();
+                // Cek apakah ada state aktif
+                const state = getState();
+                if (state && Date.now() - state.timestamp < 10 * 60 * 1000) {
+                    // Ada state aktif, tanya user
+                    if (confirm('Ada sesi aktif yang ditemukan. Lanjutkan sesi sebelumnya?')) {
+                        restoreWasitState(state);
                     }
                 }
-            }, 500); // Poll lebih cepat untuk player
-        }
-
-        function restoreWasitState() {
-            document.getElementById('kelasSelect').value = currentKelas;
-            document.getElementById('otpCode').textContent = currentOTP;
-            document.getElementById('otpSection').classList.remove('hidden');
-            updateConnectedPlayersList();
-            
-            if (timerInterval) clearInterval(timerInterval);
-            timerInterval = setInterval(updateOTPTimer, 1000);
-            updateOTPTimer();
-            
-            if (gameStarted) {
-                restoreGameState();
+            } else {
+                document.getElementById('playerPanel').classList.remove('hidden');
+                document.getElementById('debugMyId').textContent = SESSION_ID.substr(-8);
+                startPlayerSync();
             }
         }
 
-        function restoreGameState() {
-            document.getElementById('wasitSetup').classList.add('hidden');
-            document.getElementById('wasitControl').classList.remove('hidden');
-            document.getElementById('displayP1').textContent = playerNames[1];
-            document.getElementById('displayP2').textContent = playerNames[2];
-            document.getElementById('score1').textContent = scores[1];
-            document.getElementById('score2').textContent = scores[2];
-            showQuestion();
+        function checkStorageStatus() {
+            try {
+                localStorage.setItem('test', 'test');
+                localStorage.removeItem('test');
+                document.getElementById('debugStorage').textContent = '✅ OK';
+                document.getElementById('debugStorage').style.color = '#28a745';
+            } catch (e) {
+                document.getElementById('debugStorage').textContent = '❌ Error';
+                document.getElementById('debugStorage').style.color = '#dc3545';
+                alert('PERINGATAN: Browser tidak mengizinkan localStorage. Gunakan Chrome/Edge/Firefox terbaru.');
+            }
         }
+
+        // ==========================================
+        // WASIT FUNCTIONS
+        // ==========================================
 
         function generateOTP() {
             const kelas = document.getElementById('kelasSelect').value;
             if (!kelas) {
-                document.getElementById('otpSection').classList.add('hidden');
+                alert('Pilih kelas terlebih dahulu!');
                 return;
             }
-            
-            currentKelas = kelas;
-            currentOTP = Math.floor(1000 + Math.random() * 9000).toString();
-            otpExpiry = Date.now() + 5 * 60 * 1000;
-            
-            // Reset
-            connectedPlayers = [];
-            gameStarted = false;
-            scores = {1: 0, 2: 0};
-            currentQuestionIndex = 0;
-            
-            document.getElementById('otpCode').textContent = currentOTP;
-            document.getElementById('otpSection').classList.remove('hidden');
-            
-            saveState();
-            updateConnectedPlayersList();
-            
-            if (timerInterval) clearInterval(timerInterval);
-            timerInterval = setInterval(updateOTPTimer, 1000);
-            
-            alert(`OTP ${currentOTP} dibuat! Beritahu 2 pemain untuk memasukkan kode ini.`);
-        }
 
-        function updateOTPTimer() {
-            const now = Date.now();
-            const remaining = otpExpiry - now;
-            
-            if (remaining <= 0) {
-                clearInterval(timerInterval);
-                document.getElementById('otpTimer').textContent = 'KADALUARSA';
-                document.getElementById('otpCode').textContent = '----';
-                currentOTP = null;
-                connectedPlayers = [];
-                updateConnectedPlayersList();
-                localStorage.removeItem(STORAGE_KEY);
-                return;
-            }
-            
-            const minutes = Math.floor(remaining / 60000);
-            const seconds = Math.floor((remaining % 60000) / 1000);
-            document.getElementById('otpTimer').textContent = 
-                `Berlaku: ${minutes}:${seconds.toString().padStart(2, '0')}`;
-        }
+            const otp = Math.floor(1000 + Math.random() * 9000).toString();
+            const expiry = Date.now() + 5 * 60 * 1000; // 5 menit
 
-        function updateConnectedPlayersList() {
-            const container = document.getElementById('connectedPlayers');
-            const countSpan = document.getElementById('playerCount');
-            
-            countSpan.textContent = `${connectedPlayers.length}/2`;
-            
-            if (connectedPlayers.length === 0) {
-                container.innerHTML = '<p style="color: #666; font-style: italic;">Belum ada pemain yang terhubung...</p>';
-                document.getElementById('startGameBtn').disabled = true;
-            } else {
-                container.innerHTML = connectedPlayers.map((p, idx) => 
-                    `<div class="player-item">
-                        <strong>Pemain ${idx + 1}:</strong> ${p.name}
-                    </div>`
-                ).join('');
+            const state = {
+                otp: otp,
+                otpExpiry: expiry,
+                kelas: kelas,
+                players: [],
+                gameStarted: false,
+                questions: [],
+                currentQuestion: 0,
+                scores: {1: 0, 2: 0},
+                playerNames: {1: '', 2: ''},
+                history: [],
+                createdBy: SESSION_ID,
+                timestamp: Date.now()
+            };
+
+            if (setState(state)) {
+                document.getElementById('otpCode').textContent = otp;
+                document.getElementById('otpSection').classList.remove('hidden');
+                updateStatus('Room Active: ' + otp, 'active');
                 
-                if (connectedPlayers.length >= 2) {
-                    document.getElementById('startGameBtn').disabled = false;
-                    document.getElementById('player1Name').value = connectedPlayers[0].name;
-                    document.getElementById('player2Name').value = connectedPlayers[1].name;
-                }
+                // Start monitoring
+                startWasitMonitor();
+                updateDebugInfo(state);
             }
+        }
+
+        function startWasitMonitor() {
+            if (syncInterval) clearInterval(syncInterval);
+            
+            syncInterval = setInterval(() => {
+                if (!isActive) return;
+                
+                const state = getState();
+                if (!state) return;
+                
+                updateDebugInfo(state);
+                
+                // Update player list
+                const count = state.players ? state.players.length : 0;
+                document.getElementById('playerCount').textContent = `${count}/2`;
+                
+                const container = document.getElementById('connectedPlayers');
+                if (count === 0) {
+                    container.innerHTML = '<p style="color: #666; font-style: italic;">Menunggu pemain...</p>';
+                } else {
+                    container.innerHTML = state.players.map((p, i) => 
+                        `<div class="player-item">
+                            <strong>Pemain ${i+1}:</strong> ${p.name} 
+                            <span style="color: #28a745; font-size: 0.8em;">✓ Online</span>
+                        </div>`
+                    ).join('');
+                }
+                
+                // Update inputs
+                if (state.players[0]) document.getElementById('player1Name').value = state.players[0].name;
+                if (state.players[1]) document.getElementById('player2Name').value = state.players[1].name;
+                
+                // Enable start button if 2 players
+                document.getElementById('startGameBtn').disabled = count < 2;
+                document.getElementById('startGameBtn').textContent = count >= 2 ? 
+                    '🚀 Mulai Lomba' : `🔒 Mulai Lomba (Perlu ${2-count} Pemain)`;
+                
+                // Check expiry
+                if (Date.now() > state.otpExpiry) {
+                    document.getElementById('otpTimer').textContent = 'KADALUARSA';
+                    document.getElementById('otpCode').textContent = '----';
+                } else {
+                    const remaining = state.otpExpiry - Date.now();
+                    const mins = Math.floor(remaining / 60000);
+                    const secs = Math.floor((remaining % 60000) / 1000);
+                    document.getElementById('otpTimer').textContent = 
+                        `Berlaku: ${mins}:${secs.toString().padStart(2, '0')}`;
+                }
+                
+            }, 500);
+        }
+
+        function updateDebugInfo(state) {
+            document.getElementById('debugLastUpdate').textContent = 
+                state ? new Date(state.timestamp).toLocaleTimeString() : '-';
+        }
+
+        function broadcastPing() {
+            const state = getState();
+            if (!state) {
+                alert('Tidak ada room aktif!');
+                return;
+            }
+            
+            // Update timestamp untuk trigger sync di player
+            state.timestamp = Date.now();
+            state.ping = Date.now();
+            setState(state);
+            
+            alert(`📢 Ping dikirim ke ${state.players.length} pemain!`);
+        }
+
+        function restoreWasitState(state) {
+            document.getElementById('kelasSelect').value = state.kelas;
+            document.getElementById('otpCode').textContent = state.otp;
+            document.getElementById('otpSection').classList.remove('hidden');
+            startWasitMonitor();
+            
+            if (state.gameStarted) {
+                startGameUI(state);
+            }
+        }
+
+        // ==========================================
+        // PLAYER FUNCTIONS
+        // ==========================================
+
+        function startPlayerSync() {
+            let syncCount = 0;
+            
+            if (syncInterval) clearInterval(syncInterval);
+            
+            syncInterval = setInterval(() => {
+                if (!isActive) return;
+                
+                const state = getState();
+                syncCount++;
+                document.getElementById('debugSyncCount').textContent = syncCount;
+                
+                if (!state) {
+                    document.getElementById('debugRoomStatus').textContent = 'No room found';
+                    document.getElementById('debugRoomStatus').style.color = '#6c757d';
+                    updateStatus('No Room', 'error');
+                    return;
+                }
+                
+                // Check if we're connected
+                const isConnected = state.players && state.players.find(p => p.id === SESSION_ID);
+                
+                if (isConnected) {
+                    document.getElementById('debugRoomStatus').textContent = 'Connected to ' + state.otp;
+                    document.getElementById('debugRoomStatus').style.color = '#28a745';
+                    updateStatus('Connected: ' + state.otp, 'active');
+                    
+                    // If game started, switch to game view
+                    if (state.gameStarted && document.getElementById('playerWait').classList.contains('hidden') === false) {
+                        enterGameMode(state);
+                    }
+                    
+                    // Update game view if in game
+                    if (state.gameStarted && document.getElementById('playerGame').classList.contains('hidden') === false) {
+                        updatePlayerGame(state);
+                    }
+                } else {
+                    document.getElementById('debugRoomStatus').textContent = 'Room found, not joined';
+                    document.getElementById('debugRoomStatus').style.color = '#ffc107';
+                    updateStatus('Found Room: ' + state.otp, 'inactive');
+                }
+                
+            }, 800);
         }
 
         function joinGame() {
-            const otp = document.getElementById('otpInput').value.trim();
-            const name = document.getElementById('playerNameInput').value.trim();
+            const otpInput = document.getElementById('otpInput');
+            const nameInput = document.getElementById('playerNameInput');
             const msgDiv = document.getElementById('loginMessage');
             
+            const otp = otpInput.value.trim();
+            const name = nameInput.value.trim();
+            
             // Validasi
-            if (!otp || !/^\d{4}$/.test(otp)) {
-                showMessage(msgDiv, 'OTP harus 4 digit angka!', 'error');
+            if (!otp || otp.length !== 4 || !/^\d+$/.test(otp)) {
+                showError(msgDiv, 'OTP harus 4 digit angka!');
                 return;
             }
             
             if (!name) {
-                showMessage(msgDiv, 'Mohon masukkan nama!', 'error');
+                showError(msgDiv, 'Masukkan nama Anda!');
                 return;
             }
             
-            // Load state terbaru
-            if (!loadState()) {
-                showMessage(msgDiv, 'Tidak ada room aktif. Pastikan wasit sudah generate OTP!', 'error');
+            // Cek state
+            const state = getState();
+            if (!state) {
+                showError(msgDiv, 'Tidak ada room aktif. Pastikan wasit sudah generate OTP!');
                 return;
             }
             
-            // Cek OTP
-            if (otp !== currentOTP) {
-                showMessage(msgDiv, `Kode OTP salah! OTP aktif: ${currentOTP}`, 'error');
+            if (state.otp !== otp) {
+                showError(msgDiv, `OTP salah! Room aktif: ${state.otp}`);
                 return;
             }
             
-            // Cek expired
-            if (Date.now() > otpExpiry) {
-                showMessage(msgDiv, 'OTP sudah kadaluarsa!', 'error');
+            if (Date.now() > state.otpExpiry) {
+                showError(msgDiv, 'Room sudah kadaluarsa!');
                 return;
             }
             
-            // Cek kapasitas
-            if (connectedPlayers.length >= 2) {
-                showMessage(msgDiv, 'Room sudah penuh (2 pemain)!', 'error');
+            if (state.players.length >= 2) {
+                showError(msgDiv, 'Room sudah penuh (2 pemain)!');
                 return;
             }
             
             // Cek nama duplikat
-            if (connectedPlayers.find(p => p.name.toLowerCase() === name.toLowerCase())) {
-                showMessage(msgDiv, 'Nama sudah digunakan!', 'error');
+            if (state.players.find(p => p.name.toLowerCase() === name.toLowerCase())) {
+                showError(msgDiv, 'Nama sudah digunakan di room ini!');
                 return;
             }
             
-            // Daftarkan pemain
-            const playerId = 'player_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-            currentPlayerId = playerId;
-            
-            myPlayerData = {
-                id: playerId,
+            // Join
+            myPlayerId = SESSION_ID;
+            state.players.push({
+                id: SESSION_ID,
                 name: name,
                 joinedAt: Date.now()
-            };
+            });
             
-            connectedPlayers.push(myPlayerData);
-            
-            // Simpan ke storage
-            saveState();
-            
-            // Update UI
-            document.getElementById('playerLogin').classList.add('hidden');
-            document.getElementById('playerWait').classList.remove('hidden');
-            document.getElementById('connectedName').textContent = name;
-            document.getElementById('playerRoomId').textContent = currentOTP;
-            document.getElementById('playerIdDisplay').textContent = playerId.substr(-8);
-            
-            // Cek jika game sudah mulai
-            if (gameStarted) {
-                setTimeout(startPlayerGame, 1000);
+            if (setState(state)) {
+                // UI Update
+                document.getElementById('playerLogin').classList.add('hidden');
+                document.getElementById('playerWait').classList.remove('hidden');
+                document.getElementById('connectedName').textContent = name;
+                document.getElementById('playerRoomDisplay').textContent = otp;
+                
+                // If game already started
+                if (state.gameStarted) {
+                    setTimeout(() => enterGameMode(state), 500);
+                }
             }
         }
 
-        function checkConnection() {
-            loadState();
-            alert(`Status Koneksi:\n` +
-                  `OTP: ${currentOTP || '-'}\n` +
-                  `Players: ${connectedPlayers.length}/2\n` +
-                  `Game Started: ${gameStarted ? 'Yes' : 'No'}\n` +
-                  `My ID: ${currentPlayerId ? 'Yes' : 'No'}\n` +
-                  `Storage: ${localStorage.getItem(STORAGE_KEY) ? 'OK' : 'Empty'}`);
+        function showError(container, msg) {
+            container.innerHTML = `<div class="alert alert-error">${msg}</div>`;
+            setTimeout(() => container.innerHTML = '', 4000);
         }
 
-        function forceReconnect() {
-            loadState();
-            if (gameStarted && myPlayerData) {
-                startPlayerGame();
-            } else {
-                alert('Tidak bisa reconnect. Cek OTP atau join ulang.');
-            }
-        }
-
-        function forceSync() {
-            saveState();
-            alert('Sync forced! Data saved to storage.');
-            updateDebugInfo();
-        }
-
-        function showMessage(container, message, type) {
-            container.innerHTML = `<div class="alert alert-${type}">${message}</div>`;
-            setTimeout(() => container.innerHTML = '', 5000);
-        }
-
-        function startGame() {
-            if (!currentOTP || connectedPlayers.length < 2) {
-                alert('Belum bisa mulai! Pastikan OTP aktif dan 2 pemain terhubung.');
+        function checkRoomStatus() {
+            const state = getState();
+            if (!state) {
+                alert('Tidak terhubung ke room manapun!');
                 return;
             }
             
-            playerNames[1] = connectedPlayers[0].name;
-            playerNames[2] = connectedPlayers[1].name;
+            const me = state.players.find(p => p.id === SESSION_ID);
+            alert(`Status Room:\n` +
+                  `OTP: ${state.otp}\n` +
+                  `Pemain: ${state.players.length}/2\n` +
+                  `Anda: ${me ? 'Terhubung sebagai ' + me.name : 'Tidak terhubung'}\n` +
+                  `Game: ${state.gameStarted ? 'Berlangsung' : 'Menunggu'}`);
+        }
+
+        // ==========================================
+        // GAME FUNCTIONS
+        // ==========================================
+
+        function startGame() {
+            const state = getState();
+            if (!state || state.players.length < 2) {
+                alert('Belum ada 2 pemain!');
+                return;
+            }
             
             // Generate soal
-            currentQuestions = [...questionDB[currentKelas]];
-            currentQuestions.sort(() => Math.random() - 0.5);
+            const questions = [...questionDB[state.kelas]];
+            // Shuffle
+            for (let i = questions.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [questions[i], questions[j]] = [questions[j], questions[i]];
+            }
             
-            gameStarted = true;
-            currentQuestionIndex = 0;
-            scores = {1: 0, 2: 0};
+            state.gameStarted = true;
+            state.questions = questions;
+            state.currentQuestion = 0;
+            state.scores = {1: 0, 2: 0};
+            state.playerNames = {
+                1: state.players[0].name,
+                2: state.players[1].name
+            };
+            state.history = [];
             
-            saveState();
-            
-            // UI Wasit
+            if (setState(state)) {
+                startGameUI(state);
+            }
+        }
+
+        function startGameUI(state) {
             document.getElementById('wasitSetup').classList.add('hidden');
             document.getElementById('wasitControl').classList.remove('hidden');
-            document.getElementById('displayP1').textContent = playerNames[1];
-            document.getElementById('displayP2').textContent = playerNames[2];
             
-            showQuestion();
+            document.getElementById('displayP1').textContent = state.playerNames[1];
+            document.getElementById('displayP2').textContent = state.playerNames[2];
+            document.getElementById('score1').textContent = '0';
+            document.getElementById('score2').textContent = '0';
+            
+            showQuestionWasit(state);
         }
 
-        function startPlayerGame() {
+        function enterGameMode(state) {
             document.getElementById('playerWait').classList.add('hidden');
             document.getElementById('playerGame').classList.remove('hidden');
-            updatePlayerGameView();
+            updatePlayerGame(state);
         }
 
-        function updatePlayerGameView() {
+        function showQuestionWasit(state) {
+            if (state.currentQuestion >= state.questions.length) {
+                endGame();
+                return;
+            }
+            
+            const q = state.questions[state.currentQuestion];
+            const progress = ((state.currentQuestion + 1) / state.questions.length) * 100;
+            
+            document.getElementById('progressBar').style.width = progress + '%';
+            document.getElementById('qNumber').textContent = state.currentQuestion + 1;
+            document.getElementById('diffBadge').textContent = 
+                q.level === 'easy' ? 'Mudah' : q.level === 'medium' ? 'Sedang' : 'Sulit';
+            document.getElementById('diffBadge').className = 'difficulty-badge ' + q.level;
+            document.getElementById('qText').textContent = q.q;
+            
+            const optionsDiv = document.getElementById('qOptions');
+            optionsDiv.innerHTML = '';
+            const labels = ['A', 'B', 'C', 'D'];
+            q.options.forEach((opt, idx) => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.innerHTML = `<strong>${labels[idx]}.</strong> ${opt}`;
+                btn.onclick = () => revealAnswerWasit(idx);
+                optionsDiv.appendChild(btn);
+            });
+        }
+
+        function updatePlayerGame(state) {
             // Update skor
-            const myIndex = connectedPlayers.findIndex(p => p.id === currentPlayerId);
-            if (myIndex !== -1) {
-                document.getElementById('playerScore').textContent = scores[myIndex + 1] || 0;
+            const me = state.players.find(p => p.id === SESSION_ID);
+            if (me) {
+                const myIndex = state.players.findIndex(p => p.id === SESSION_ID) + 1;
+                document.getElementById('playerScore').textContent = state.scores[myIndex] || 0;
             }
             
             // Update soal
-            if (currentQuestionIndex < currentQuestions.length) {
-                const q = currentQuestions[currentQuestionIndex];
-                document.getElementById('playerQNumber').textContent = currentQuestionIndex + 1;
+            if (state.currentQuestion < state.questions.length) {
+                const q = state.questions[state.currentQuestion];
+                document.getElementById('playerQNumber').textContent = state.currentQuestion + 1;
                 document.getElementById('playerDiffBadge').textContent = 
                     q.level === 'easy' ? 'Mudah' : q.level === 'medium' ? 'Sedang' : 'Sulit';
                 document.getElementById('playerDiffBadge').className = 'difficulty-badge ' + q.level;
@@ -1274,36 +1389,9 @@
             }
         }
 
-        function showQuestion() {
-            if (currentQuestionIndex >= currentQuestions.length) {
-                endGame();
-                return;
-            }
-            
-            const q = currentQuestions[currentQuestionIndex];
-            const progress = ((currentQuestionIndex + 1) / currentQuestions.length) * 100;
-            
-            document.getElementById('progressBar').style.width = progress + '%';
-            document.getElementById('qNumber').textContent = currentQuestionIndex + 1;
-            document.getElementById('diffBadge').textContent = 
-                q.level === 'easy' ? 'Mudah' : q.level === 'medium' ? 'Sedang' : 'Sulit';
-            document.getElementById('diffBadge').className = 'difficulty-badge ' + q.level;
-            document.getElementById('qText').textContent = q.q;
-            
-            const optionsDiv = document.getElementById('qOptions');
-            optionsDiv.innerHTML = '';
-            const labels = ['A', 'B', 'C', 'D'];
-            q.options.forEach((opt, idx) => {
-                const btn = document.createElement('button');
-                btn.className = 'option-btn';
-                btn.innerHTML = `<strong>${labels[idx]}.</strong> ${opt}`;
-                btn.onclick = () => revealAnswer(idx);
-                optionsDiv.appendChild(btn);
-            });
-        }
-
-        function revealAnswer(selectedIndex) {
-            const q = currentQuestions[currentQuestionIndex];
+        function revealAnswerWasit(selectedIndex) {
+            const state = getState();
+            const q = state.questions[state.currentQuestion];
             const buttons = document.querySelectorAll('#qOptions .option-btn');
             
             buttons.forEach((btn, idx) => {
@@ -1316,96 +1404,100 @@
             });
         }
 
-        function correctAnswer(player) {
-            scores[player] += 10;
-            document.getElementById('score' + player).textContent = scores[player];
-            saveState();
+        function correctAnswer(playerNum) {
+            const state = getState();
+            state.scores[playerNum] += 10;
+            setState(state);
             
-            questionHistory.push({
-                question: currentQuestionIndex + 1,
-                level: currentQuestions[currentQuestionIndex].level,
-                winner: playerNames[player],
-                correct: true,
-                points: 10
+            document.getElementById('score' + playerNum).textContent = state.scores[playerNum];
+            
+            state.history.push({
+                question: state.currentQuestion + 1,
+                level: state.questions[state.currentQuestion].level,
+                player: state.playerNames[playerNum],
+                result: 'Benar',
+                points: '+10'
             });
         }
 
-        function wrongAnswer(player) {
-            scores[player] = Math.max(0, scores[player] - 5);
-            document.getElementById('score' + player).textContent = scores[player];
-            saveState();
+        function wrongAnswer(playerNum) {
+            const state = getState();
+            state.scores[playerNum] = Math.max(0, state.scores[playerNum] - 5);
+            setState(state);
             
-            questionHistory.push({
-                question: currentQuestionIndex + 1,
-                level: currentQuestions[currentQuestionIndex].level,
-                winner: playerNames[player],
-                correct: false,
-                points: -5
+            document.getElementById('score' + playerNum).textContent = state.scores[playerNum];
+            
+            state.history.push({
+                question: state.currentQuestion + 1,
+                level: state.questions[state.currentQuestion].level,
+                player: state.playerNames[playerNum],
+                result: 'Salah',
+                points: '-5'
             });
         }
 
         function nextQuestion() {
-            currentQuestionIndex++;
-            saveState();
-            showQuestion();
+            const state = getState();
+            state.currentQuestion++;
+            setState(state);
+            showQuestionWasit(state);
         }
 
         function endGame() {
-            saveState();
+            const state = getState();
             
-            // Wasit view
             document.getElementById('wasitControl').classList.add('hidden');
             document.getElementById('resultsPanel').classList.remove('hidden');
             
-            const p1Score = scores[1];
-            const p2Score = scores[2];
+            const s1 = state.scores[1];
+            const s2 = state.scores[2];
             
-            document.getElementById('finalP1').textContent = playerNames[1];
-            document.getElementById('finalP2').textContent = playerNames[2];
-            document.getElementById('finalScore1').textContent = p1Score;
-            document.getElementById('finalScore2').textContent = p2Score;
+            document.getElementById('finalP1').textContent = state.playerNames[1];
+            document.getElementById('finalP2').textContent = state.playerNames[2];
+            document.getElementById('finalScore1').textContent = s1;
+            document.getElementById('finalScore2').textContent = s2;
             
-            if (p1Score > p2Score) {
-                document.getElementById('winnerText').textContent = '🏆 ' + playerNames[1] + ' Menang!';
-            } else if (p2Score > p1Score) {
-                document.getElementById('winnerText').textContent = '🏆 ' + playerNames[2] + ' Menang!';
+            if (s1 > s2) {
+                document.getElementById('winnerText').textContent = '🏆 ' + state.playerNames[1] + ' Menang!';
+            } else if (s2 > s1) {
+                document.getElementById('winnerText').textContent = '🏆 ' + state.playerNames[2] + ' Menang!';
             } else {
                 document.getElementById('winnerText').textContent = '🤝 Seri!';
             }
             
-            // Detail table
+            // Table
             const tbody = document.getElementById('detailBody');
             tbody.innerHTML = '';
-            questionHistory.forEach(h => {
+            state.history.forEach(h => {
                 const row = tbody.insertRow();
                 row.insertCell(0).textContent = h.question;
                 
-                const levelCell = row.insertCell(1);
                 const badge = document.createElement('span');
                 badge.className = 'badge ' + (h.level === 'easy' ? 'easy' : h.level === 'medium' ? 'medium' : 'hard');
                 badge.textContent = h.level === 'easy' ? 'Mudah' : h.level === 'medium' ? 'Sedang' : 'Sulit';
+                const levelCell = row.insertCell(1);
                 levelCell.appendChild(badge);
                 
-                const resultCell = row.insertCell(2);
-                resultCell.textContent = (h.correct ? '✓ Benar' : '✗ Salah') + ` (${h.points > 0 ? '+' : ''}${h.points})`;
-                resultCell.style.color = h.correct ? 'green' : 'red';
-                
-                row.insertCell(3).textContent = h.winner;
+                row.insertCell(2).textContent = h.player + ' - ' + h.result;
+                row.insertCell(3).textContent = h.points;
             });
             
-            // Player results
-            showPlayerResults();
+            // Update player juga
+            if (currentRole === 'player') {
+                showPlayerEndGame(state);
+            }
         }
 
-        function showPlayerResults() {
-            const myIndex = connectedPlayers.findIndex(p => p.id === currentPlayerId);
-            if (myIndex === -1) return;
-            
+        function showPlayerEndGame(state) {
             document.getElementById('playerGame').classList.add('hidden');
             document.getElementById('playerResults').classList.remove('hidden');
             
-            const myScore = scores[myIndex + 1];
-            const opponentScore = scores[myIndex === 0 ? 2 : 1];
+            const me = state.players.find(p => p.id === SESSION_ID);
+            if (!me) return;
+            
+            const myIndex = state.players.findIndex(p => p.id === SESSION_ID) + 1;
+            const myScore = state.scores[myIndex];
+            const opponentScore = state.scores[myIndex === 1 ? 2 : 1];
             
             document.getElementById('playerFinalScore').textContent = myScore;
             
@@ -1414,7 +1506,7 @@
                 winnerText.textContent = '🎉 Selamat! Anda Menang!';
                 winnerText.style.color = '#28a745';
             } else if (myScore < opponentScore) {
-                winnerText.textContent = '😔 Anda Kalah. Tetap semangat!';
+                winnerText.textContent = '😔 Anda Kalah';
                 winnerText.style.color = '#dc3545';
             } else {
                 winnerText.textContent = '🤝 Seri!';
@@ -1423,50 +1515,23 @@
         }
 
         function backToMenu() {
-            clearInterval(timerInterval);
-            clearInterval(syncInterval);
+            isActive = false;
+            if (syncInterval) clearInterval(syncInterval);
             
-            // Hapus data pemain ini dari connected players
-            if (currentRole === 'player' && myPlayerData) {
-                loadState();
-                connectedPlayers = connectedPlayers.filter(p => p.id !== currentPlayerId);
-                saveState();
+            // Remove self from players if connected
+            if (currentRole === 'player') {
+                const state = getState();
+                if (state) {
+                    state.players = state.players.filter(p => p.id !== SESSION_ID);
+                    setState(state);
+                }
             }
             
-            currentRole = null;
-            currentOTP = null;
-            currentPlayerId = null;
-            myPlayerData = null;
-            gameStarted = false;
-            
-            document.querySelectorAll('.section').forEach(s => s.classList.add('hidden'));
-            document.getElementById('mainMenu').classList.remove('hidden');
-            document.getElementById('connectionStatus').className = 'connection-status status-offline';
-            document.getElementById('connectionStatus').textContent = 'Offline';
-            
-            // Reset all inputs
-            document.getElementById('kelasSelect').value = '';
-            document.getElementById('otpSection').classList.add('hidden');
-            document.getElementById('wasitSetup').classList.remove('hidden');
-            document.getElementById('wasitControl').classList.add('hidden');
-            document.getElementById('resultsPanel').classList.add('hidden');
-            
-            document.getElementById('playerLogin').classList.remove('hidden');
-            document.getElementById('playerWait').classList.add('hidden');
-            document.getElementById('playerGame').classList.add('hidden');
-            document.getElementById('playerResults').classList.add('hidden');
-            
-            document.getElementById('otpInput').value = '';
-            document.getElementById('playerNameInput').value = '';
-            document.getElementById('player1Name').value = '';
-            document.getElementById('player2Name').value = '';
-            document.getElementById('loginMessage').innerHTML = '';
+            location.reload(); // Simple reset
         }
 
         // Init
-        window.addEventListener('load', () => {
-            console.log('App loaded. Storage available:', !!window.localStorage);
-        });
+        init();
     </script>
 </body>
 </html>
